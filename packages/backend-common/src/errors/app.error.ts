@@ -1,5 +1,5 @@
 
-class AppError extends Error {
+export class AppError extends Error {
     readonly status: string;
     readonly isOperational: boolean;
     readonly message: string;
@@ -12,5 +12,3 @@ class AppError extends Error {
         this.isOperational = true;
     }
   }
-
-export default AppError;
