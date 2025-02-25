@@ -1,6 +1,6 @@
 import express from 'express';
 import serverConfig from "./configs/server.config";
-import routes from "./routes";
+import routes from "./routes/index";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

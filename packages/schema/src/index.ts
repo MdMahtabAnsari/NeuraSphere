@@ -1,4 +1,4 @@
-import {TSignup,signup} from "./auth"
+import {TSignup,signup} from "./auth";
 
 export {
     signup,
