@@ -1,0 +1,28 @@
+{
+  "name": "http-server",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc -b && node dist/index.js",
+    "start": "node dist/index.js",
+    "build": "tsc -b"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@workspace/typescript-config": "workspace:*",
+    "@types/express": "^5.0.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "dotenv": "^16.4.7",
+    "argon2": "^0.41.1",
+    "@workspace/backend-common": "workspace:*",
+    "@workspace/schema": "workspace:*",
+    "@workspace/database":"workspace:*"
+  }
+}
