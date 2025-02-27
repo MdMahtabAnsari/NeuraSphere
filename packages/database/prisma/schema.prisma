@@ -40,6 +40,38 @@ model User {
   receiverFriend  Friends[]         @relation("receiver")
   follower        Follower[]        @relation("follower")
   following       Follower[]        @relation("following")
+  token           Token?
+  otp             Otp[]
+}
+
+model Token {
+  id        String   @id @default(uuid())
+  token     String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  otp       String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  type      Otp_Type
+
+  @@unique([type, userId])
+}
+
+enum Otp_Type {
+  Login
+  ForgotPassword
+  VerifyEmail
+  VerifyMobile
 }
 
 model User_Interests {

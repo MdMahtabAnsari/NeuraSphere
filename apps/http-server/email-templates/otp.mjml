@@ -1,0 +1,39 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Your OTP Code for Secure Login</mj-preview>
+
+    <!-- Define a reusable class using mj-class -->
+    <mj-style inline="inline">
+      .otp-code {
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        background: #f4f4f4;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: inline-block;
+      }
+    </mj-style>
+
+    <mj-class name="otp-code" color="#222" font-size="24px" font-weight="bold" background-color="#f4f4f4" padding="10px 20px" border-radius="5px" />
+  </mj-head>
+
+  <mj-body>
+    <mj-section background-color="#ffffff" padding="20px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="#333">🔐 Your OTP Code</mj-text>
+        <mj-text font-size="16px" color="#555">Hello {{name}},</mj-text>
+        <mj-text font-size="16px" color="#555">Your One-Time Password (OTP) for verification is:</mj-text>
+
+        <!-- Apply the mj-class here instead of using class="" -->
+        <mj-text align="center" mj-class="otp-code">{{otp}}</mj-text>
+
+        <mj-text font-size="14px" color="#888">This OTP is valid for <strong>{{expiresIn}} minutes</strong>. Please do not share this code with anyone.</mj-text>
+        <mj-divider border-color="#ddd" />
+        <mj-text font-size="14px" color="#666">If you didn’t request this code, please ignore this email.</mj-text>
+        <mj-text font-size="14px" color="#666">Stay safe,</mj-text>
+        <mj-text font-size="16px" font-weight="bold" color="#333">Neura Sphere Team</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

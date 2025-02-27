@@ -1,5 +1,5 @@
 import { Request,Response,NextFunction } from "express";
-import { AppError} from "@workspace/backend-common/errors";
+import { AppError} from "../utils/errors";
 
 
 const errorHandler =(err:Error,req:Request,res:Response,next:NextFunction) => {
@@ -11,7 +11,7 @@ const errorHandler =(err:Error,req:Request,res:Response,next:NextFunction) => {
             data:null,
         });
     } else {
-        console.error(err);
+        console.error(`Error in errorHandler: ${err}`);
         res.status(500).json({
             message: "Internal Server Error",
             status: "error",

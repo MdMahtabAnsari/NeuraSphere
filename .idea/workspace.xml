@@ -5,8 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e62889ab-c564-4f31-940f-514ea3a24513" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/apps/http-server/src/configs/cookie-config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/http-server/src/repositories/token.repository.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/http-server/src/services/jwt.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/http-server/src/utils/email-template/otp.mjml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/configs/server.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/configs/server.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/controllers/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/controllers/auth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/middlewares/errorHandler.middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/middlewares/errorHandler.middleware.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/repositories/auth.repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/repositories/auth.repository.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/routes/auth.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/routes/auth.route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/services/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/services/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/tsconfig.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/tsconfig.tsbuildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/app.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/badRequest.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/conflict.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/internalServer.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/notFound.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/src/errors/unauthorised.error.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/backend-common/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/database/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/packages/database/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/schema/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/schema/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/schema/src/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/schema/src/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/schema/src/index.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/turbo.json" beforeDir="false" afterPath="$PROJECT_DIR$/turbo.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,7 +43,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="tsconfig.json" />
         <option value="TypeScript File" />
+        <option value="MJML File" />
       </list>
     </option>
   </component>
@@ -32,22 +61,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/MARaj/Desktop/NeuraSphere",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "settings.editor.selected.configurable": "MTFeaturesSettingsConfigurable",
-    "ts.external.directory.path": "C:\\Users\\MARaj\\Desktop\\NeuraSphere\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/MARaj/Desktop/NeuraSphere&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\MARaj\\Desktop\\NeuraSphere\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -59,6 +88,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\MARaj\Desktop\NeuraSphere\packages\email-template" />
       <recent name="C:\Users\MARaj\Desktop\NeuraSphere\packages\backend-common\src" />
     </key>
   </component>
@@ -79,6 +109,10 @@
       <updated>1740480254056</updated>
       <workItem from="1740480256114" duration="19000" />
       <workItem from="1740480276600" duration="1937000" />
+      <workItem from="1740551919991" duration="24000" />
+      <workItem from="1740551946375" duration="12725000" />
+      <workItem from="1740570055187" duration="277000" />
+      <workItem from="1740570352346" duration="1167000" />
     </task>
     <servers />
   </component>
