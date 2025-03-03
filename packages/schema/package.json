@@ -20,7 +20,8 @@
     "./auth": "./src/auth.ts",
     "./jwt":"./src/jwt.ts",
     "./otp":"./src/otp.ts",
-    "./user":"./src/user.ts"
+    "./user":"./src/user.ts",
+    "./post":"./src/post.ts"
 
   }
 }

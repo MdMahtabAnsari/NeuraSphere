@@ -74,18 +74,28 @@ enum Otp_Type {
   VerifyMobile
 }
 
+model Interest {
+  id        String         @id @default(uuid())
+  name      String         @unique // Ensures unique interests
+  users     User_Interests[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
 model User_Interests {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  interest  String
+  interest  Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
+  interestId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@unique([userId, interestId])
 }
 
 model Post {
   id            String         @id @default(uuid())
-  content       String
+  content       String?
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   media         Media[]
   likes         Post_Like[]
@@ -97,6 +107,7 @@ model Post {
   tags          Post_Tags[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  isEdited      Boolean        @default(false)
 }
 
 model Media {
@@ -107,15 +118,27 @@ model Media {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([postId, url])
+}
+
+model Tag{
+  id        String   @id @default(uuid())
+  name      String   @unique
+  posts     Post_Tags[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Post_Tags {
   id        String   @id @default(uuid())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  tag       String
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@unique([postId, tagId])
 }
 
 model Post_Like {
