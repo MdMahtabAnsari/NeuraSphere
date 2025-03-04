@@ -28,10 +28,8 @@ model User {
   updatedAt       DateTime          @updatedAt
   interests       User_Interests[]
   posts           Post[]
-  postLikes       Post_Like[]
-  postDislikes    Post_Dislike[]
-  commentLikes    Comment_Like[]
-  commentDislikes Comment_Dislike[]
+  postReactions   Post_Reaction[]
+  commentReactions Comment_Reaction[]
   views           Views[]
   comment         Comments[]
   sender          Notification[]    @relation("NotificationSender")
@@ -98,8 +96,7 @@ model Post {
   content       String?
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   media         Media[]
-  likes         Post_Like[]
-  dislikes      Post_Dislike[]
+  reactions     Post_Reaction[]
   views         Views[]
   comments      Comments[]
   userId        String
@@ -141,24 +138,22 @@ model Post_Tags {
   @@unique([postId, tagId])
 }
 
-model Post_Like {
-  id        String   @id @default(uuid())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum ReactionType {
+  Like
+  Dislike
 }
 
-model Post_Dislike {
-  id        String   @id @default(uuid())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+model Post_Reaction {
+  id        String       @id @default(uuid())
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  type      ReactionType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([postId, userId]) // Ensures one reaction per user per post
 }
 
 model Views {
@@ -179,8 +174,7 @@ model Comments {
   userId        String
   content       String
   isEdited      Boolean           @default(false)
-  likes         Comment_Like[]
-  dislikes      Comment_Dislike[]
+  reactions     Comment_Reaction[]
   notifications Notification[]
   parent        Comments?         @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
   parentId      String?
@@ -189,24 +183,17 @@ model Comments {
   updatedAt     DateTime          @updatedAt
 }
 
-model Comment_Like {
-  id        String   @id @default(uuid())
-  comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+model Comment_Reaction{
+  id        String       @id @default(uuid())
+  comment   Comments     @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+  type      ReactionType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
-model Comment_Dislike {
-  id        String   @id @default(uuid())
-  comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  commentId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([commentId, userId]) // Ensures one reaction per user per comment
 }
 
 model Notification {

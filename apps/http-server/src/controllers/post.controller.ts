@@ -54,10 +54,10 @@ class PostController{
         }
     }
 
-    async getPostByTag(req:Request,res:Response,next:NextFunction){
+    async getPostByTag(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const {tags,page,limit} = req.query as z.infer<typeof getPostByTags>;
-            const posts = await postService.getPostByTags(tags,page?parseInt(page):1,limit?parseInt(limit):10);
+            const posts = await postService.getPostByTags(req.user.id,tags,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message: "Posts fetched successfully",
                 status: "success",
@@ -68,10 +68,10 @@ class PostController{
         }
     }
 
-    async getPostById(req:Request,res:Response,next:NextFunction){
+    async getPostById(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const postId = req.params.id as z.infer<typeof id>;
-            const post = await postService.getPostById(postId);
+            const post = await postService.getPostById(req.user.id,postId);
             res.status(200).json({
                 message: "Post fetched successfully",
                 status: "success",
@@ -85,7 +85,7 @@ class PostController{
     async getUserPosts(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
-            const posts = await postService.getUserPosts(req.user.id,page?parseInt(page):1,limit?parseInt(limit):10);
+            const posts = await postService.getUserPosts(req.user.id,req.user.id,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message: "Posts fetched successfully",
                 status: "success",
@@ -96,11 +96,11 @@ class PostController{
         }
     }
 
-    async getOtherUserPosts(req:Request,res:Response,next:NextFunction){
+    async getOtherUserPosts(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
             const userId = req.params.userId as z.infer<typeof id>;
-            const posts = await postService.getUserPosts(userId,page?parseInt(page):1,limit?parseInt(limit):10);
+            const posts = await postService.getUserPosts(req.user.id,userId,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message: "Posts fetched successfully",
                 status: "success",
@@ -111,10 +111,10 @@ class PostController{
         }
     }
 
-    async getPostByUsernamesAndUseridAndNameAndMobileAndEmail(req:Request,res:Response,next:NextFunction){
+    async getPostByUsernamesAndUseridAndNameAndMobileAndEmail(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const {identifier,page,limit} = req.query as z.infer<typeof getPostByUsernamesAndUseridAndNameAndMobileAndEmail>;
-            const posts = await postService.getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifier,page?parseInt(page):1,limit?parseInt(limit):10);
+            const posts = await postService.getPostByUsernamesAndUseridAndNameAndMobileAndEmail(req.user.id,identifier,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message: "Posts fetched successfully",
                 status: "success",

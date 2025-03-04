@@ -2,11 +2,12 @@ import { z } from 'zod';
 import { mediaRepository } from '../repositories/media.repository';
 import { tagRepository } from '../repositories/tag.repository';
 import { postRepository } from '../repositories/post.repository';
-import { InternalServerError, AppError,NotFoundError,UnauthorisedError } from '../utils/errors';
-import { createPost,updatePost,tags,identifier } from '@workspace/schema/post';
+import { InternalServerError, AppError, NotFoundError, UnauthorisedError } from '../utils/errors';
+import { createPost, updatePost, tags, identifier } from '@workspace/schema/post';
 import { getTags } from '../utils/helpers/tag.helper';
+import { postReactionService } from './postReaction.service';
 
-export class PostService {
+class PostService {
     async createPost(userId: string, data: z.infer<typeof createPost>) {
         try {
             const tags = data.content ? getTags(data.content) : [];
@@ -14,10 +15,21 @@ export class PostService {
             if (data.media) {
                 await mediaRepository.createMedia(post.id, data.media);
             }
-            if(tags.length){
-                await tagRepository.createTags(post.id,tags);
+            if (tags.length) {
+                await tagRepository.createTags(post.id, tags);
             }
-            return await postRepository.getPostByIdWithAllData(post.id);
+            const postDetails = await postRepository.getPostByIdWithAllData(post.id);
+            return {
+                ...postDetails,
+                reactions: {
+                    likeCount: 0,
+                    dislikeCount: 0
+                },
+                reactionStatus: {
+                    like: false,
+                    dislike: false
+                }
+            }
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -27,38 +39,46 @@ export class PostService {
         }
     }
 
-    async updatePost(userId:string,data: z.infer<typeof updatePost>) {
+    async updatePost(userId: string, data: z.infer<typeof updatePost>) {
         try {
             const isPostExist = await postRepository.getPostById(data.id);
             if (!isPostExist) {
                 throw new NotFoundError("Post not found");
             }
             let isUpdated = false;
-            if(isPostExist.userId !== userId){
+            if (isPostExist.userId !== userId) {
                 throw new UnauthorisedError("You are not allowed to update this post");
             }
-            if(data.content && data.content !== isPostExist.content){
+            if (data.content && data.content !== isPostExist.content) {
                 isUpdated = true;
             }
             const tags = data.content ? getTags(data.content) : [];
             const post = await postRepository.updatePost(data);
-            if(tags.length){
-                await tagRepository.updateTags(post.id,tags);
-            }else{
+            if (tags.length) {
+                await tagRepository.updateTags(post.id, tags);
+            } else {
                 await tagRepository.deleteTags(post.id);
             }
-            if(data.addMedia?.length){
-                await mediaRepository.createMedia(post.id,data.addMedia);
+            if (data.addMedia?.length) {
+                await mediaRepository.createMedia(post.id, data.addMedia);
                 isUpdated = true;
             }
-            if(data.removeMedia?.length){
+            if (data.removeMedia?.length) {
                 await mediaRepository.removeMedia(data.removeMedia);
                 isUpdated = true;
             }
-            if(isUpdated && isPostExist.isEdited === false){
+            if (isUpdated && isPostExist.isEdited === false) {
                 await postRepository.makePostIsEdited(post.id);
             }
-            return await postRepository.getPostByIdWithAllData(post.id);
+            const updatedPost = await postRepository.getPostByIdWithAllData(post.id);
+            const reactionCount = await postReactionService.getPostReactionCount(post.id);
+            const postReactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
+            return {
+                ...updatedPost,
+                reactions: reactionCount,
+                reactionStatus: postReactionStatus
+            }
+
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -68,9 +88,16 @@ export class PostService {
         }
     }
 
-    async getPostById(postId: string) {
+    async getPostById(userId:string,postId: string) {
         try {
-            return await postRepository.getPostByIdWithAllData(postId);
+            const post = postRepository.getPostByIdWithAllData(postId);
+            const postReaction = postReactionService.getPostReactionCount(postId);
+            const postReactionStatus = postReactionService.getUserReactionStatus(postId, userId);
+            return {
+                post,
+                reactions: postReaction,
+                reactionStatus: postReactionStatus
+            }
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -80,10 +107,26 @@ export class PostService {
         }
     }
 
-    async getPostByTags(tag:z.infer<typeof tags>,page:number=1,limit:number=10){
-        try{
-            return await postRepository.getPostByTags(tag,page,limit);
-        }catch(error){
+    async getPostByTags(userId:string,tag: z.infer<typeof tags>, page: number = 1, limit: number = 10) {
+        try {
+            const posts = await postRepository.getPostByTags(tag, page, limit);
+            const totalPage = await postRepository.getPostByTagsPages(tag, limit);
+            const postsWithReaction = await Promise.all(posts.map(async (post) => {
+                const reactionCount = await postReactionService.getPostReactionCount(post.id);
+                const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
+                return {
+                    ...post,
+                    reactions: reactionCount,
+                    reactionStatus
+                };
+            }
+            ));
+            return {
+                posts: postsWithReaction,
+                totalPage,
+                currentPage: page
+            }
+        } catch (error) {
             if (error instanceof AppError) {
                 throw error;
             }
@@ -92,18 +135,19 @@ export class PostService {
         }
     }
 
-    async deletePost(userId:string,postId:string){
-        try{
+    async deletePost(userId: string, postId: string) {
+        try {
             const post = await postRepository.getPostById(postId);
-            if(!post){
+            if (!post) {
                 throw new NotFoundError("Post not found");
             }
-            if(post.userId !== userId){
+            if (post.userId !== userId) {
                 throw new UnauthorisedError("You are not allowed to delete this post");
             }
             await postRepository.deletePost(postId);
+            await postReactionService.removeCache(postId, userId);
             return true;
-        }catch(error){
+        } catch (error) {
             if (error instanceof AppError) {
                 throw error;
             }
@@ -112,10 +156,26 @@ export class PostService {
         }
     }
 
-    async getUserPosts(userId:string,page:number=1,limit:number=10){
-        try{
-            return await postRepository.getUserPosts(userId,page,limit);
-        }catch(error){
+    async getUserPosts(myId:string,userId: string, page: number = 1, limit: number = 10) {
+        try {
+            const posts = await postRepository.getUserPosts(userId, page, limit);
+            const totalPage = await postRepository.getUserPostsPages(userId, limit);
+            const postsWithReaction = await Promise.all(posts.map(async (post) => {
+                const reactionCount = await postReactionService.getPostReactionCount(post.id);
+                const reactionStatus = await postReactionService.getUserReactionStatus(myId, post.id);
+                return {
+                    ...post,
+                    reactions: reactionCount,
+                    reactionStatus
+                };
+            }
+            ));
+            return {
+                posts: postsWithReaction,
+                totalPage,
+                currentPage: page
+            }
+        } catch (error) {
             if (error instanceof AppError) {
                 throw error;
             }
@@ -124,10 +184,26 @@ export class PostService {
         }
     }
 
-    async getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifiers:z.infer<typeof identifier>,page:number=1,limit:number=10){
-        try{
-            return await postRepository.getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifiers,page,limit);
-        }catch(error){
+    async getPostByUsernamesAndUseridAndNameAndMobileAndEmail(userId:string,identifiers: z.infer<typeof identifier>, page: number = 1, limit: number = 10) {
+        try {
+            const posts = await postRepository.getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifiers, page, limit);
+            const totalPage = await postRepository.getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages(identifiers, limit);
+            const postsWithReaction = await Promise.all(posts.map(async (post) => {
+                const reactionCount = await postReactionService.getPostReactionCount(post.id);
+                const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
+                return {
+                    ...post,
+                    reactions: reactionCount,
+                    reactionStatus
+                };
+            }
+            ));
+            return {
+                posts: postsWithReaction,
+                totalPage,
+                currentPage: page
+            }
+        } catch (error) {
             if (error instanceof AppError) {
                 throw error;
             }

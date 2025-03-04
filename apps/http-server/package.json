@@ -45,6 +45,7 @@
     "nodemailer": "^6.10.0",
     "otp-generator": "^4.0.1",
     "cookie-parser": "^1.4.7",
-    "compromise": "^14.14.4"
+    "compromise": "^14.14.4",
+    "ioredis": "^5.5.0"
   }
 }

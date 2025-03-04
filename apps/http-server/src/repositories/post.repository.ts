@@ -7,13 +7,12 @@ class PostRepository {
 
     async createPost(userId: string, data: z.infer<typeof createPost>) {
         try {
-            const post = await client.post.create({
+           return await client.post.create({
                 data: {
                     content: data.content,
                     userId: userId,
                 }
             })
-            return post
         } catch (error) {
             console.error("Error in createPost Repository", error)
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -27,7 +26,7 @@ class PostRepository {
 
     async getPostByIdWithAllData(postId: string) {
         try {
-            const post = await client.post.findUnique({
+            return await client.post.findUnique({
                 where: {
                     id: postId
                 },
@@ -52,7 +51,6 @@ class PostRepository {
                     }
                 }
             })
-            return post
         } catch (error) {
             console.error("Error in getPostByIdWithAllData Repository", error)
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -66,7 +64,7 @@ class PostRepository {
 
     async updatePost(data: z.infer<typeof updatePost>) {
         try {
-            const post = await client.post.update({
+            return await client.post.update({
                 where: {
                     id: data.id
                 },
@@ -74,7 +72,6 @@ class PostRepository {
                     content: data.content ? data.content : null
                 }
             })
-            return post
         } catch (error) {
             console.error("Error in updatePost Repository", error)
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -123,35 +120,11 @@ class PostRepository {
         }
     }
 
-    async getPostByTags(tag: z.infer<typeof tags> | undefined, page: number = 1, limit: number = 10) {
+    async getPostByTags(tag: z.infer<typeof tags>, page: number = 1, limit: number = 10) {
         try {
-            if (!tag || tag.length === 0) {
-                console.log("No tags found");
-                return [];
-            }
-
             const skip = (page - 1) * limit;
 
-            const totalPosts = await client.post.count({
-                where: {
-                    OR: tag.map(tagName => ({
-                        tags: {
-                            some: {
-                                tag: {
-                                    name: {
-                                        contains: tagName, // `contains` instead of `like` for better filtering
-                                        mode: "insensitive"
-                                    }
-                                }
-                            }
-                        }
-                    }))
-                }
-            });
-
-            const totalPages = Math.ceil(totalPosts / limit);
-
-            const posts= await client.post.findMany({
+            return await client.post.findMany({
                 where: {
                     OR: tag.map(tagName => ({
                         tags: {
@@ -203,7 +176,6 @@ class PostRepository {
                     isEdited: true,
                 }
             });
-            return {posts,totalPages,currentPage:page}
         } catch (error) {
             console.error("Error in getPostByTags Repository", error);
             throw new InternalServerError();
@@ -228,14 +200,7 @@ class PostRepository {
     async getUserPosts(userId: string, page: number = 1, limit: number = 10) {
         try {
             const skip = (page - 1) * limit
-
-            const totalPosts = await client.post.count({
-                where: {
-                    userId: userId
-                }
-            });
-            const totalPages = Math.ceil(totalPosts / limit);
-            const posts = await client.post.findMany({
+            return await client.post.findMany({
                 where: {
                     userId: userId
                 },
@@ -276,7 +241,6 @@ class PostRepository {
                     isEdited: true,
                 }
             });
-            return {posts,totalPages,currentPage:page}
         } catch (error) {
             console.error("Error in getUserPosts Repository", error)
             throw new InternalServerError()
@@ -285,39 +249,8 @@ class PostRepository {
 
     async getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifiers: z.infer<typeof identifier>, page: number = 1, limit: number = 10) {
         try {
-            const skip = (page - 1) * limit
-            const totalPosts = await client.post.count({
-                where: {
-                    OR: [
-                        {
-                            user: {
-                                name: {
-                                    contains: identifiers,
-                                    mode: "insensitive"
-                                }
-                            }
-                        },
-                        {
-                            user: {
-                                id: identifiers
-                            }
-                        },
-                        {
-                            id: identifiers
-                        }, {
-                            user: {
-                                email: identifiers
-                            }
-                        }, {
-                            user: {
-                                mobile: identifiers
-                            }
-                        }
-                    ]
-                }
-            });
-            const totalPages = Math.ceil(totalPosts / limit);
-            const posts = await client.post.findMany({
+            const skip = (page - 1) * limit;
+            return await client.post.findMany({
                 where: {
                     OR: [
                         {
@@ -383,10 +316,85 @@ class PostRepository {
                     isEdited: true,
                 }
             });
-            return {posts,totalPages,currentPage:page}
         } catch (error) {
             console.error("Error in getPostByUsernamesAndUseridAndName Repository", error)
             throw new InternalServerError()
+        }
+    }
+
+    async getUserPostsPages(userId: string,limit:number=10){
+        try{
+            const totalPosts = await client.post.count({
+                where:{
+                    userId
+                }
+            });
+            return Math.ceil(totalPosts/limit);
+        }catch(error){
+            console.error("Error in getUserPostsPages Repository", error)
+            throw new InternalServerError()
+        }
+    }async getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages(identifiers: z.infer<typeof identifier>,limit:number=10){
+        try{
+            const totalPosts = await client.post.count({
+                where: {
+                    OR: [
+                        {
+                            user: {
+                                name: {
+                                    contains: identifiers,
+                                    mode: "insensitive"
+                                }
+                            }
+                        },
+                        {
+                            user: {
+                                id: identifiers
+                            }
+                        },
+                        {
+                            id: identifiers
+                        }, {
+                            user: {
+                                email: identifiers
+                            }
+                        }, {
+                            user: {
+                                mobile: identifiers
+                            }
+                        }
+                    ]
+                }
+            });
+            return Math.ceil(totalPosts / limit);
+        }catch(error){
+            console.error("Error in getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages Repository", error)
+            throw new InternalServerError()
+        }
+    }
+
+    async getPostByTagsPages(tag: z.infer<typeof tags>,limit:number=10){
+        try{
+            const totalPosts = await client.post.count({
+                where: {
+                    OR: tag.map(tagName => ({
+                        tags: {
+                            some: {
+                                tag: {
+                                    name: {
+                                        contains: tagName, // `contains` instead of `like` for better filtering
+                                        mode: "insensitive"
+                                    }
+                                }
+                            }
+                        }
+                    }))
+                }
+            });
+            return Math.ceil(totalPosts / limit);
+        }catch(error){
+            console.error("Error in getPostByTagsPages Repository", error);
+            throw new InternalServerError();
         }
     }
 

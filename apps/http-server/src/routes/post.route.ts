@@ -14,16 +14,16 @@ postRouter.post('/create',bodyValidator(createPost),accessTokenValidator(),postC
 postRouter.put('/update',bodyValidator(updatePost),accessTokenValidator(),postController.updatePost);
 // @ts-ignore
 postRouter.delete('/delete/:id',parmsValidator(idObject),accessTokenValidator(),postController.deletePost);
-
+// @ts-ignore
 postRouter.get('/search/tags',queryValidator(getPostByTags),accessTokenValidator(),postController.getPostByTag);
 
 // @ts-ignore
 postRouter.get('/me',queryValidator(pageLimitObj),accessTokenValidator(),postController.getUserPosts);
-
+// @ts-ignore
 postRouter.get('/search',queryValidator(getPostByUsernamesAndUseridAndNameAndMobileAndEmail),accessTokenValidator(),postController.getPostByUsernamesAndUseridAndNameAndMobileAndEmail);
-
+// @ts-ignore
 postRouter.get('/:id',parmsValidator(idObject),accessTokenValidator(),postController.getPostById);
-
+// @ts-ignore
 postRouter.get('/other/:id',parmsValidator(idObject),queryValidator(pageLimitObj),accessTokenValidator(),postController.getOtherUserPosts);
 
 

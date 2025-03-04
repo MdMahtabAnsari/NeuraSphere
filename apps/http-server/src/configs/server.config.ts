@@ -14,6 +14,7 @@ const serverConfig = {
     SMTP_FROM: process.env.SMTP_FROM || "m.a.raj58232@gmail.com",
     EMAIL_SECURE: process.env.EMAIL_SECURE === "true",
     OTP_EXPIRES_IN: process.env.OTP_EXPIRES_IN || "10m",
+    REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
 }
 
 export default serverConfig;
