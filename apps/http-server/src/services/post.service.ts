@@ -6,6 +6,28 @@ import { InternalServerError, AppError, NotFoundError, UnauthorisedError } from 
 import { createPost, updatePost, tags, identifier } from '@workspace/schema/post';
 import { getTags } from '../utils/helpers/tag.helper';
 import { postReactionService } from './postReaction.service';
+import { commentService } from './comment.service';
+import {commentReactionService} from "./commentReaction.service";
+
+interface PostsData{
+        content: string | null
+        media: {
+            type: string
+            url: string
+            id: string
+        }[]
+        id: string
+        createdAt: Date
+        updatedAt: Date
+        isEdited: boolean
+        user: {
+            image: string | null
+            id: string
+            name: string
+        }
+        tags: {}
+
+}
 
 class PostService {
     async createPost(userId: string, data: z.infer<typeof createPost>) {
@@ -28,7 +50,8 @@ class PostService {
                 reactionStatus: {
                     like: false,
                     dislike: false
-                }
+                },
+                comments: 0
             }
         } catch (error) {
             if (error instanceof AppError) {
@@ -73,10 +96,12 @@ class PostService {
             const updatedPost = await postRepository.getPostByIdWithAllData(post.id);
             const reactionCount = await postReactionService.getPostReactionCount(post.id);
             const postReactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
+            const commentCount = await commentService.getPostCommentsCount(post.id);
             return {
                 ...updatedPost,
                 reactions: reactionCount,
-                reactionStatus: postReactionStatus
+                reactionStatus: postReactionStatus,
+                comments: commentCount
             }
 
         } catch (error) {
@@ -93,10 +118,13 @@ class PostService {
             const post = postRepository.getPostByIdWithAllData(postId);
             const postReaction = postReactionService.getPostReactionCount(postId);
             const postReactionStatus = postReactionService.getUserReactionStatus(postId, userId);
+            const commentCount = commentService.getPostCommentsCount(postId);
             return {
                 post,
                 reactions: postReaction,
-                reactionStatus: postReactionStatus
+                reactionStatus: postReactionStatus,
+                comments: commentCount
+
             }
         } catch (error) {
             if (error instanceof AppError) {
@@ -111,16 +139,7 @@ class PostService {
         try {
             const posts = await postRepository.getPostByTags(tag, page, limit);
             const totalPage = await postRepository.getPostByTagsPages(tag, limit);
-            const postsWithReaction = await Promise.all(posts.map(async (post) => {
-                const reactionCount = await postReactionService.getPostReactionCount(post.id);
-                const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
-                return {
-                    ...post,
-                    reactions: reactionCount,
-                    reactionStatus
-                };
-            }
-            ));
+            const postsWithReaction = await this.getPostMetaData(posts,userId)
             return {
                 posts: postsWithReaction,
                 totalPage,
@@ -145,7 +164,9 @@ class PostService {
                 throw new UnauthorisedError("You are not allowed to delete this post");
             }
             await postRepository.deletePost(postId);
-            await postReactionService.removeCache(postId, userId);
+            await postReactionService.removeCache(postId);
+            await commentService.removeCache(postId);
+            await commentReactionService.removePostCache(postId);
             return true;
         } catch (error) {
             if (error instanceof AppError) {
@@ -163,10 +184,12 @@ class PostService {
             const postsWithReaction = await Promise.all(posts.map(async (post) => {
                 const reactionCount = await postReactionService.getPostReactionCount(post.id);
                 const reactionStatus = await postReactionService.getUserReactionStatus(myId, post.id);
+                const commentCount = await commentService.getPostCommentsCount(post.id);
                 return {
                     ...post,
                     reactions: reactionCount,
-                    reactionStatus
+                    reactionStatus,
+                    comments: commentCount
                 };
             }
             ));
@@ -188,16 +211,7 @@ class PostService {
         try {
             const posts = await postRepository.getPostByUsernamesAndUseridAndNameAndMobileAndEmail(identifiers, page, limit);
             const totalPage = await postRepository.getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages(identifiers, limit);
-            const postsWithReaction = await Promise.all(posts.map(async (post) => {
-                const reactionCount = await postReactionService.getPostReactionCount(post.id);
-                const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
-                return {
-                    ...post,
-                    reactions: reactionCount,
-                    reactionStatus
-                };
-            }
-            ));
+            const postsWithReaction = await this.getPostMetaData(posts,userId)
             return {
                 posts: postsWithReaction,
                 totalPage,
@@ -208,6 +222,26 @@ class PostService {
                 throw error;
             }
             console.error("Error in getPostByUsernamesAndUseridAndName service", error);
+            throw new InternalServerError();
+        }
+    }
+
+    private async getPostMetaData(posts:PostsData[],userId:string){
+        try{
+           return await Promise.all(posts.map(async (post) => {
+                    const reactionCount = await postReactionService.getPostReactionCount(post.id);
+                    const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
+                    const commentCount = await commentService.getPostCommentsCount(post.id);
+                    return {
+                        ...post,
+                        reactions: reactionCount,
+                        reactionStatus,
+                        comments: commentCount
+                    };
+                }
+            ));
+        }catch(error){
+            console.error("Error in getPostMetaData service", error);
             throw new InternalServerError();
         }
     }

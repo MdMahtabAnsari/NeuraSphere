@@ -3,7 +3,7 @@ import { postController } from "../controllers/post.controller";
 import { createPost,updatePost,idObject,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail } from "@workspace/schema/post";
 import { bodyValidator } from "../validators/body.validator";
 import { accessTokenValidator } from "../validators/jwt.validator";
-import { parmsValidator } from "../validators/params.validator";
+import { paramsValidator } from "../validators/params.validator";
 import { queryValidator } from "../validators/query.validator";
 
 
@@ -13,7 +13,7 @@ postRouter.post('/create',bodyValidator(createPost),accessTokenValidator(),postC
 // @ts-ignore
 postRouter.put('/update',bodyValidator(updatePost),accessTokenValidator(),postController.updatePost);
 // @ts-ignore
-postRouter.delete('/delete/:id',parmsValidator(idObject),accessTokenValidator(),postController.deletePost);
+postRouter.delete('/delete/:id',paramsValidator(idObject),accessTokenValidator(),postController.deletePost);
 // @ts-ignore
 postRouter.get('/search/tags',queryValidator(getPostByTags),accessTokenValidator(),postController.getPostByTag);
 
@@ -22,9 +22,9 @@ postRouter.get('/me',queryValidator(pageLimitObj),accessTokenValidator(),postCon
 // @ts-ignore
 postRouter.get('/search',queryValidator(getPostByUsernamesAndUseridAndNameAndMobileAndEmail),accessTokenValidator(),postController.getPostByUsernamesAndUseridAndNameAndMobileAndEmail);
 // @ts-ignore
-postRouter.get('/:id',parmsValidator(idObject),accessTokenValidator(),postController.getPostById);
+postRouter.get('/:id',paramsValidator(idObject),accessTokenValidator(),postController.getPostById);
 // @ts-ignore
-postRouter.get('/other/:id',parmsValidator(idObject),queryValidator(pageLimitObj),accessTokenValidator(),postController.getOtherUserPosts);
+postRouter.get('/other/:id',paramsValidator(idObject),queryValidator(pageLimitObj),accessTokenValidator(),postController.getOtherUserPosts);
 
 
 export default postRouter;

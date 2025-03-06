@@ -53,7 +53,7 @@ class AuthController{
 
     async refresh(req:CustomRequest,res:Response,next:NextFunction){
         try{
-            const {accessToken,refreshToken} = await authService.refresh(req.user);
+            const {accessToken,refreshToken} = await authService.refresh(req.user.id);
             const accessTokenExpiry = jwtService.getTokenLeftTime(accessToken);
             const refreshTokenExpiry = jwtService.getTokenLeftTime(refreshToken);
             res.cookie('accessToken',accessToken,cookieConfigGenerator({type:"accessToken",sameSite:"strict",expiresIn:accessTokenExpiry})).cookie('refreshToken',refreshToken,cookieConfigGenerator({type:"refreshToken",sameSite:"strict",expiresIn:refreshTokenExpiry})).json({

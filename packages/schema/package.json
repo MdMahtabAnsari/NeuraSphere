@@ -22,7 +22,8 @@
     "./otp":"./src/otp.ts",
     "./user":"./src/user.ts",
     "./post":"./src/post.ts",
-    "./reaction":"./src/reaction.ts"
+    "./reaction":"./src/reaction.ts",
+    "./comment":"./src/comment.ts"
 
   }
 }

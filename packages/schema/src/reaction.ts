@@ -16,3 +16,20 @@ export const pageLimitObj = z.object({
 export const idObject = z.object({
     id: id
 }).strip()
+
+export const postIdCommentIdObj = z.object({
+    // postId must be a string and a valid uuid
+    postId: id,
+    // commentId must be a string and a valid uuid
+    commentId: id
+}).strip()
+
+export const commentIdObj = z.object({
+    // commentId must be a string and a valid uuid
+    commentId: id
+}).strip()
+
+export const postIdObj = z.object({
+    // postId must be a string and a valid uuid
+    postId: id
+}).strip()

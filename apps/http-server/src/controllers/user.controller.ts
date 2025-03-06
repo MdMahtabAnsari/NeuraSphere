@@ -3,7 +3,7 @@ import { Response, NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
 import { cookieConfigGenerator } from "../configs/cookie.config";
 import { jwtService } from "../services/jwt.service";
-import { updateUser,updateUserOldPassword,updateUserOtpBasedPassword } from "@workspace/schema/user";
+import { updateUser,updateUserOldPassword } from "@workspace/schema/user";
 import {z} from "zod";
 
 

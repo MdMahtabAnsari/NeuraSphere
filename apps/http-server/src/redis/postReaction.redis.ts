@@ -16,6 +16,9 @@ class PostReactionRedis {
     private getReactionStatusKey(postId: string,userId:string) {
         return `post:${postId}:user:${userId}:reaction`;
     }
+    private getUniversalKey(postId: string) {
+        return `post:${postId}:*`;
+    }
     async setLike(postId:string,count:number) {
         try{
             const key = this.getLikeKey(postId);
@@ -65,8 +68,7 @@ class PostReactionRedis {
     async incrementsLike(postId:string) {
         try{
             const key = this.getLikeKey(postId);
-            const count = await redisClient.incr(key);
-            return count
+            return await redisClient.incr(key)
         }catch(error){
             console.error('Error incrementing post like count in redis',error);
             return null;
@@ -75,8 +77,7 @@ class PostReactionRedis {
     async incrementsDislike(postId:string) {
         try{
             const key = this.getDislikeKey(postId);
-            const count = await redisClient.incr(key);
-            return count;
+            return await redisClient.incr(key);
         }catch(error){
             console.error('Error incrementing post dislike count in redis',error);
             return null;
@@ -86,8 +87,7 @@ class PostReactionRedis {
     async decrementsLike(postId:string) {
         try{
             const key = this.getLikeKey(postId);
-            const count = await redisClient.decr(key);
-            return count;
+            return await redisClient.decr(key);
         }catch(error){
             console.error('Error decrementing post like count in redis',error);
             return null;
@@ -96,8 +96,7 @@ class PostReactionRedis {
     async decrementsDislike(postId:string) {
         try{
             const key = this.getDislikeKey(postId);
-            const count = await redisClient.decr(key);
-            return count;
+            return await redisClient.decr(key);
         }catch(error){
             console.error('Error decrementing post dislike count in redis',error);
             return null;
@@ -162,6 +161,17 @@ class PostReactionRedis {
             const likeKey = this.getLikeKey(postId);
             const dislikeKey = this.getDislikeKey(postId);
             await redisClient.del(likeKey,dislikeKey);
+            return true;
+        }catch(error){
+            console.error('Error deleting post reaction from redis',error);
+            return false;
+        }
+    }
+
+    async removeCacheByPostId(postId:string) {
+        try{
+            const keys = await redisClient.keys(this.getUniversalKey(postId));
+            await redisClient.del(...keys);
             return true;
         }catch(error){
             console.error('Error deleting post reaction from redis',error);

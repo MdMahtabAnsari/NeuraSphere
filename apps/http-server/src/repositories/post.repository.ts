@@ -1,7 +1,7 @@
-import { createPost, updatePost, identifier, tags } from "@workspace/schema/post"
-import { z } from "zod"
-import { InternalServerError, NotFoundError } from "../utils/errors"
-import { client, Prisma } from "@workspace/database/client"
+import {createPost, identifier, tags, updatePost} from "@workspace/schema/post"
+import {z} from "zod"
+import {InternalServerError, NotFoundError} from "../utils/errors"
+import {client, Prisma} from "@workspace/database/client"
 
 class PostRepository {
 
@@ -85,12 +85,11 @@ class PostRepository {
 
     async getPostById(postId: string) {
         try {
-            const post = await client.post.findUnique({
+            return await client.post.findUnique({
                 where: {
                     id: postId
                 }
             })
-            return post
         } catch (error) {
             console.error("Error in getPostById Repository", error)
             if (error instanceof Prisma.PrismaClientKnownRequestError) {

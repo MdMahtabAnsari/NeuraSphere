@@ -55,9 +55,9 @@ class AuthService{
         }
     }
 
-    async refresh(data:z.infer<typeof jwt>){
+    async refresh(userId: string){
         try{
-            const user = await userRepository.getUserById(data.id);
+            const user = await userRepository.getUserById(userId);
             if(!user){
                 throw new NotFoundError('User');
             }

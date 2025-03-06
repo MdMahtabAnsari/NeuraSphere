@@ -37,3 +37,6 @@ npm-debug.log*
 
 # webstorm
 .idea
+
+#vscode
+.vscode

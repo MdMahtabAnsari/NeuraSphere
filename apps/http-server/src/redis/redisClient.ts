@@ -3,7 +3,7 @@ import serverConfig from "../configs/server.config";
 
 class RedisClient {
     private static client: Redis;
-    private instance: Redis;
+    private readonly instance: Redis;
 
     constructor() {
         if(!RedisClient.client){

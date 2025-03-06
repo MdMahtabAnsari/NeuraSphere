@@ -1,5 +1,3 @@
-import { createPost, updatePost, identifier, tags } from "@workspace/schema/post"
-import { z } from "zod"
 import { InternalServerError, NotFoundError, AppError, ConflictError, BadRequestError } from "../utils/errors"
 import { client, Prisma } from "@workspace/database/client"
 
@@ -7,14 +5,6 @@ class PostReactionRepository {
 
     async likePost(userId: string, postId: string) {
         try {
-            const post = await client.post.findFirst({
-                where: {
-                    id: postId
-                }
-            });
-            if (!post) {
-                throw new NotFoundError('Post not found');
-            }
             let isDislikedStatus = false;
             const isDisliked = await client.post_Reaction.findFirst({
                 where: {
@@ -48,25 +38,22 @@ class PostReactionRepository {
         } catch (error) {
             console.error('Error liking post', error);
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                throw new ConflictError('Post already liked');
+                if(error.code === 'P2025'){
+                    throw new NotFoundError('Post');
+                }
+                else if(error.code === 'P2002'){
+                    throw new ConflictError('like');
+                }
+                else if(error.code === 'P2016'){
+                    throw new NotFoundError('User');
+                }
             }
-            else if (error instanceof AppError) {
-                throw error;
-            }
-            throw new InternalServerError('Error liking post');
+            throw new InternalServerError();
         }
     }
 
     async unlikePost(userId: string, postId: string) {
         try {
-            const post = await client.post.findFirst({
-                where: {
-                    id: postId
-                }
-            });
-            if (!post) {
-                throw new NotFoundError('Post not found');
-            }
             const like = await client.post_Reaction.delete({
                 where: {
                     postId_userId: {
@@ -80,24 +67,21 @@ class PostReactionRepository {
         } catch (error) {
             console.error('Error unliking post', error);
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                throw new BadRequestError('Post not liked');
+                if(error.code === 'P2025'){
+                    throw new NotFoundError('Post');
+                }
+                else if(error.code === 'P2002'){
+                    throw new NotFoundError('like');
+                }
+                else if(error.code === 'P2016'){
+                    throw new NotFoundError('User');
+                }
             }
-            if (error instanceof AppError) {
-                throw error;
-            }
-            throw new InternalServerError('Error unliking post');
+            throw new InternalServerError();
         }
     }
     async dislikePost(userId: string, postId: string) {
         try {
-            const post = await client.post.findFirst({
-                where: {
-                    id: postId
-                }
-            });
-            if (!post) {
-                throw new NotFoundError('Post not found');
-            }
             let isLikedStatus = false;
             const isLiked = await client.post_Reaction.findFirst({
                 where: {
@@ -131,26 +115,22 @@ class PostReactionRepository {
         } catch (error) {
             console.error('Error disliking post', error);
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                throw new ConflictError('Post already disliked');
+                if(error.code === 'P2025'){
+                    throw new NotFoundError('Post');
+                }
+                else if(error.code === 'P2002'){
+                    throw new ConflictError('dislike');
+                }
+                else if(error.code === 'P2016'){
+                    throw new NotFoundError('User');
+                }
             }
-            else if (error instanceof AppError) {
-                throw error;
-            }
-            throw new InternalServerError('Error disliking post');
+            throw new InternalServerError();
         }
     }
 
     async removeDislikePost(userId: string, postId: string) {
         try {
-            const post = await client.post.findFirst({
-                where: {
-                    id: postId
-                }
-
-            });
-            if (!post) {
-                throw new NotFoundError('Post not found');
-            }
             const dislike = await client.post_Reaction.delete({
                 where: {
                     postId_userId: {
@@ -164,12 +144,17 @@ class PostReactionRepository {
         } catch (error) {
             console.error('Error removing dislike from post', error);
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                throw new BadRequestError('Post not disliked');
+                if(error.code === 'P2025'){
+                    throw new NotFoundError('Post');
+                }
+                else if(error.code === 'P2002'){
+                    throw new NotFoundError('disliked');
+                }
+                else if(error.code === 'P2016'){
+                    throw new NotFoundError('User');
+                }
             }
-            if (error instanceof AppError) {
-                throw error;
-            }
-            throw new InternalServerError('Error removing dislike from post');
+            throw new InternalServerError();
         }
     }
 
@@ -184,7 +169,7 @@ class PostReactionRepository {
             return likeCount;
         } catch (error) {
             console.error('Error getting post like count', error);
-            throw new InternalServerError('Error getting post like count');
+            throw new InternalServerError();
         }
     }
 
@@ -199,7 +184,7 @@ class PostReactionRepository {
             return dislikeCount;
         } catch (error) {
             console.error('Error getting post dislike count', error);
-            throw new InternalServerError('Error getting post dislike count');
+            throw new InternalServerError();
         }
     }
 
@@ -217,7 +202,7 @@ class PostReactionRepository {
             return { like: false, dislike: false };
         } catch (error) {
             console.error('Error getting user reaction status', error);
-            throw new InternalServerError('Error getting user reaction status');
+            throw new InternalServerError();
         }
     }
 
@@ -235,13 +220,18 @@ class PostReactionRepository {
                     createdAt:'desc'
                 },
                 select: {
+                    id:true,
+                    postId:true,
+                    type:true,
                     user: {
                         select: {
                             id: true,
                             name: true,
                             image: true
                         }
-                    }
+                    },
+                    createdAt:true,
+                    updatedAt:true
 
                 },
             });
@@ -249,7 +239,7 @@ class PostReactionRepository {
 
         } catch (error) {
             console.error('Error getting liked users', error);
-            throw new InternalServerError('Error getting liked users');
+            throw new InternalServerError();
         }
     }
     async getDislikedUsers(postId: string, page: number = 1, limit: number = 10) {
@@ -266,20 +256,25 @@ class PostReactionRepository {
                     createdAt:"desc"
                 },
                 select: {
+                    id:true,
+                    postId:true,
+                    type:true,
                     user: {
                         select: {
                             id: true,
                             name: true,
                             image: true
                         }
-                    }
+                    },
+                    createdAt:true,
+                    updatedAt:true
 
                 },
             });
             return users;
         } catch (error) {
             console.error('Error getting disliked users', error);
-            throw new InternalServerError('Error getting disliked users');
+            throw new InternalServerError();
         }
     }
 
@@ -294,7 +289,7 @@ class PostReactionRepository {
             return Math.ceil(total / limit);
         } catch (error) {
             console.error('Error getting liked users pages', error);
-            throw new InternalServerError('Error getting liked users pages');
+            throw new InternalServerError();
         }
     }
 
@@ -309,7 +304,7 @@ class PostReactionRepository {
             return Math.ceil(total / limit);
         } catch (error) {
             console.error('Error getting disliked users pages', error);
-            throw new InternalServerError('Error getting disliked users pages');
+            throw new InternalServerError();
         }
     }
 }

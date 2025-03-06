@@ -13,11 +13,8 @@ class PostReactionService {
                     if (cachedDislikeCount !== null) {
                         await postReactionRedis.decrementsDislike(postId);
                     } else {
-                        const disLikeCount =
-                            await postReactionRepository.getPostDislikeCount(postId);
-                        if (disLikeCount) {
-                            await postReactionRedis.setDislike(postId, disLikeCount);
-                        }
+                        const disLikeCount = await postReactionRepository.getPostDislikeCount(postId);
+                        await postReactionRedis.setDislike(postId, disLikeCount);
                     }
                 }
                 const cachedLikeCount = await postReactionRedis.getLike(postId);
@@ -26,10 +23,8 @@ class PostReactionService {
                     likeCount = count ? count : likeCount;
                 } else {
                     const count = await postReactionRepository.getPostLikeCount(postId);
-                    if (likeCount) {
                         await postReactionRedis.setLike(postId, likeCount);
                         likeCount = count;
-                    }
                 }
 
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: true, dislike: false });
@@ -55,9 +50,8 @@ class PostReactionService {
                         await postReactionRedis.decrementsLike(postId);
                     } else {
                         const likeCount = await postReactionRepository.getPostLikeCount(postId);
-                        if (likeCount) {
-                            await postReactionRedis.setLike(postId, likeCount);
-                        }
+                        await postReactionRedis.setLike(postId, likeCount);
+
                     }
                 }
                 const cachedDislikeCount = await postReactionRedis.getDislike(postId);
@@ -66,10 +60,8 @@ class PostReactionService {
                     dislikeCount = count ? count : dislikeCount;
                 } else {
                     const count = await postReactionRepository.getPostDislikeCount(postId);
-                    if (count) {
-                        await postReactionRedis.setDislike(postId, count);
-                        dislikeCount = count;
-                    }
+                    await postReactionRedis.setDislike(postId, count);
+                    dislikeCount = count;
                 }
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: true });
             }
@@ -123,10 +115,9 @@ class PostReactionService {
         }
     }
 
-    async removeCache(postId: string, userId: string) {
+    async removeCache(postId: string) {
         try {
-            await postReactionRedis.deletePostReaction(postId);
-            await postReactionRedis.deleteUserReactionStatus(postId, userId);
+            await postReactionRedis.removeCacheByPostId(postId);
             return true;
         } catch (error) {
             console.error("Error removing cache", error);
@@ -145,10 +136,8 @@ class PostReactionService {
                     likeCount = count ? count : likeCount;
                 } else {
                     const count = await postReactionRepository.getPostLikeCount(postId);
-                    if (count) {
                         await postReactionRedis.setLike(postId, count);
                         likeCount = count;
-                    }
                 }
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: false });
             }
@@ -173,10 +162,8 @@ class PostReactionService {
                     dislikeCount = count ? count : dislikeCount;
                 } else {
                     const count = await postReactionRepository.getPostDislikeCount(postId);
-                    if (count) {
                         await postReactionRedis.setDislike(postId, count);
                         dislikeCount = count;
-                    }
                 }
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: false });
             }

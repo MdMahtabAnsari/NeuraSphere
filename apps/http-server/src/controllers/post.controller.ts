@@ -1,5 +1,5 @@
 import { postService } from "../services/post.service";
-import {Request, Response,NextFunction } from "express";
+import {Response,NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
 import { createPost,updatePost,id,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail } from "@workspace/schema/post";
 import { z } from "zod";
