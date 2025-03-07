@@ -1,6 +1,6 @@
 import express from 'express';
 import serverConfig from "./configs/server.config";
-import routes from "./routes/index";
+import routes from "./routes";
 import morgan from "morgan";
 import helmet from 'helmet';
 import passport from 'passport';
