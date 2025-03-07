@@ -13,6 +13,9 @@ class ViewsService {
             }
             return viewsCount;
         } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
             console.error("Error creating view", error);
             throw new InternalServerError();
         }
@@ -28,6 +31,9 @@ class ViewsService {
             await viewsRedis.setViews(postId, views);
             return views;
         } catch (error) {
+            if(error instanceof AppError){
+                throw error;
+            }
             console.error("Error getting post views", error);
             throw new InternalServerError();
         }
@@ -37,6 +43,9 @@ class ViewsService {
         try {
             await viewsRedis.deleteViews(postId);
         } catch (error) {
+            if(error instanceof AppError){
+                throw error;
+            }
             console.error("Error removing cache", error);
             throw new InternalServerError();
         }
