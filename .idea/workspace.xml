@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e62889ab-c564-4f31-940f-514ea3a24513" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/http-server/src/controllers/views.controller.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/http-server/src/repositories/views.repository.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/http-server/src/routes/views.route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/http-server/src/services/views.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/schema/src/views.ts" afterDir="false" />
+    <list default="true" id="e62889ab-c564-4f31-940f-514ea3a24513" name="Changes" comment="feat: enhance error handling in views service to propagate AppError">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/http-server/src/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/routes/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/http-server/src/services/post.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/services/post.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/http-server/tsconfig.tsbuildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/tsconfig.tsbuildinfo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/schema/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/schema/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +37,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -57,24 +48,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/MARaj/Desktop/NeuraSphere",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Users\\MARaj\\Desktop\\NeuraSphere\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/MARaj/Desktop/NeuraSphere&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\MARaj\\Desktop\\NeuraSphere\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -119,10 +110,42 @@
       <workItem from="1741322214245" duration="17000" />
       <workItem from="1741322242347" duration="2689000" />
       <workItem from="1741325044732" duration="4034000" />
+      <workItem from="1741344297584" duration="643000" />
     </task>
+    <task id="LOCAL-00001" summary="feat: add views functionality with controller, service, repository, and routes">
+      <option name="closed" value="true" />
+      <created>1741344416593</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741344416593</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: remove unused paramsValidator import from views route">
+      <option name="closed" value="true" />
+      <created>1741344439496</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1741344439496</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat: enhance error handling in views service to propagate AppError">
+      <option name="closed" value="true" />
+      <created>1741344571847</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1741344571847</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: add views functionality with controller, service, repository, and routes" />
+    <MESSAGE value="feat: remove unused paramsValidator import from views route" />
+    <MESSAGE value="feat: enhance error handling in views service to propagate AppError" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: enhance error handling in views service to propagate AppError" />
   </component>
 </project>
