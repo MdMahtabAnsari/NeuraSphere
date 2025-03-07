@@ -23,7 +23,8 @@
     "./user":"./src/user.ts",
     "./post":"./src/post.ts",
     "./reaction":"./src/reaction.ts",
-    "./comment":"./src/comment.ts"
+    "./comment":"./src/comment.ts",
+    "./views":"./src/views.ts"
 
   }
 }

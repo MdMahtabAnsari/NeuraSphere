@@ -8,6 +8,7 @@ import { getTags } from '../utils/helpers/tag.helper';
 import { postReactionService } from './postReaction.service';
 import { commentService } from './comment.service';
 import {commentReactionService} from "./commentReaction.service";
+import {viewsService} from "./views.service";
 
 interface PostsData{
         content: string | null
@@ -51,7 +52,8 @@ class PostService {
                     like: false,
                     dislike: false
                 },
-                comments: 0
+                comments: 0,
+                views: 0
             }
         } catch (error) {
             if (error instanceof AppError) {
@@ -97,11 +99,13 @@ class PostService {
             const reactionCount = await postReactionService.getPostReactionCount(post.id);
             const postReactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
             const commentCount = await commentService.getPostCommentsCount(post.id);
+            const viewsCount = await viewsService.getPostViews(post.id);
             return {
                 ...updatedPost,
                 reactions: reactionCount,
                 reactionStatus: postReactionStatus,
-                comments: commentCount
+                comments: commentCount,
+                views: viewsCount
             }
 
         } catch (error) {
@@ -119,11 +123,13 @@ class PostService {
             const postReaction = postReactionService.getPostReactionCount(postId);
             const postReactionStatus = postReactionService.getUserReactionStatus(postId, userId);
             const commentCount = commentService.getPostCommentsCount(postId);
+            const viewsCount = viewsService.getPostViews(postId);
             return {
                 post,
                 reactions: postReaction,
                 reactionStatus: postReactionStatus,
-                comments: commentCount
+                comments: commentCount,
+                views: viewsCount
 
             }
         } catch (error) {
@@ -167,6 +173,7 @@ class PostService {
             await postReactionService.removeCache(postId);
             await commentService.removeCache(postId);
             await commentReactionService.removePostCache(postId);
+            await viewsService.removeCache(postId);
             return true;
         } catch (error) {
             if (error instanceof AppError) {
@@ -181,18 +188,7 @@ class PostService {
         try {
             const posts = await postRepository.getUserPosts(userId, page, limit);
             const totalPage = await postRepository.getUserPostsPages(userId, limit);
-            const postsWithReaction = await Promise.all(posts.map(async (post) => {
-                const reactionCount = await postReactionService.getPostReactionCount(post.id);
-                const reactionStatus = await postReactionService.getUserReactionStatus(myId, post.id);
-                const commentCount = await commentService.getPostCommentsCount(post.id);
-                return {
-                    ...post,
-                    reactions: reactionCount,
-                    reactionStatus,
-                    comments: commentCount
-                };
-            }
-            ));
+            const postsWithReaction = await this.getPostMetaData(posts,myId)
             return {
                 posts: postsWithReaction,
                 totalPage,
@@ -232,11 +228,13 @@ class PostService {
                     const reactionCount = await postReactionService.getPostReactionCount(post.id);
                     const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
                     const commentCount = await commentService.getPostCommentsCount(post.id);
+                    const viewsCount = await viewsService.getPostViews(post.id);
                     return {
                         ...post,
                         reactions: reactionCount,
                         reactionStatus,
-                        comments: commentCount
+                        comments: commentCount,
+                        views: viewsCount
                     };
                 }
             ));
