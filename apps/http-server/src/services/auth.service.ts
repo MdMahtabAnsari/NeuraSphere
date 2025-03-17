@@ -6,13 +6,19 @@ import {hash,verify} from "argon2"
 import {jwtService} from "./jwt.service";
 import {jwt} from "@workspace/schema/jwt";
 import { userRepository } from "../repositories/user.repository";
+import { userGraph } from "../graph/user.graph";
 
 class AuthService{
     async signup(data:z.infer<typeof signup>){
         try{
             data.password = await hash(data.password);
             data.dob = new Date(data.dob);
-            return await authRepository.signup(data);
+            const signupData = await authRepository.signup(data);
+            if(signupData){
+                await userGraph.createUser(signupData);
+            }
+            const {password,...user} = signupData;
+            return user;
         }catch(error){
             if(error instanceof AppError){
                 throw error;

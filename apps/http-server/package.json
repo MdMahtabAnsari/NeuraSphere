@@ -46,6 +46,7 @@
     "otp-generator": "^4.0.1",
     "cookie-parser": "^1.4.7",
     "compromise": "^14.14.4",
-    "ioredis": "^5.5.0"
+    "ioredis": "^5.5.0",
+    "neo4j-driver": "^5.28.1"
   }
 }

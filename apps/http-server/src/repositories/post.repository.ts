@@ -1,13 +1,13 @@
-import {createPost, identifier, tags, updatePost} from "@workspace/schema/post"
-import {z} from "zod"
-import {InternalServerError, NotFoundError} from "../utils/errors"
-import {client, Prisma} from "@workspace/database/client"
+import { createPost, identifier, tags, updatePost } from "@workspace/schema/post"
+import { z } from "zod"
+import { InternalServerError, NotFoundError } from "../utils/errors"
+import { client, Prisma } from "@workspace/database/client"
 
 class PostRepository {
 
     async createPost(userId: string, data: z.infer<typeof createPost>) {
         try {
-           return await client.post.create({
+            return await client.post.create({
                 data: {
                     content: data.content,
                     userId: userId,
@@ -45,6 +45,7 @@ class PostRepository {
                     user: {
                         select: {
                             id: true,
+                            username: true,
                             name: true,
                             image: true
                         }
@@ -103,7 +104,7 @@ class PostRepository {
 
     async makePostIsEdited(postId: string) {
         try {
-            await client.post.update({
+            return await client.post.update({
                 where: {
                     id: postId
                 },
@@ -111,7 +112,6 @@ class PostRepository {
                     isEdited: true
                 }
             })
-            return true
         }
         catch (error) {
             console.error("Error in makePostIsEdited Repository", error)
@@ -156,6 +156,7 @@ class PostRepository {
                     user: {
                         select: {
                             id: true,
+                            username: true,
                             name: true,
                             image: true
                         }
@@ -221,6 +222,7 @@ class PostRepository {
                     user: {
                         select: {
                             id: true,
+                            username: true,
                             name: true,
                             image: true
                         }
@@ -296,6 +298,7 @@ class PostRepository {
                     user: {
                         select: {
                             id: true,
+                            username: true,
                             name: true,
                             image: true
                         }
@@ -321,20 +324,20 @@ class PostRepository {
         }
     }
 
-    async getUserPostsPages(userId: string,limit:number=10){
-        try{
+    async getUserPostsPages(userId: string, limit: number = 10) {
+        try {
             const totalPosts = await client.post.count({
-                where:{
+                where: {
                     userId
                 }
             });
-            return Math.ceil(totalPosts/limit);
-        }catch(error){
+            return Math.ceil(totalPosts / limit);
+        } catch (error) {
             console.error("Error in getUserPostsPages Repository", error)
             throw new InternalServerError()
         }
-    }async getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages(identifiers: z.infer<typeof identifier>,limit:number=10){
-        try{
+    } async getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages(identifiers: z.infer<typeof identifier>, limit: number = 10) {
+        try {
             const totalPosts = await client.post.count({
                 where: {
                     OR: [
@@ -366,14 +369,14 @@ class PostRepository {
                 }
             });
             return Math.ceil(totalPosts / limit);
-        }catch(error){
+        } catch (error) {
             console.error("Error in getPostByUsernamesAndUseridAndNameAndMobileAndEmailPages Repository", error)
             throw new InternalServerError()
         }
     }
 
-    async getPostByTagsPages(tag: z.infer<typeof tags>,limit:number=10){
-        try{
+    async getPostByTagsPages(tag: z.infer<typeof tags>, limit: number = 10) {
+        try {
             const totalPosts = await client.post.count({
                 where: {
                     OR: tag.map(tagName => ({
@@ -391,9 +394,56 @@ class PostRepository {
                 }
             });
             return Math.ceil(totalPosts / limit);
-        }catch(error){
+        } catch (error) {
             console.error("Error in getPostByTagsPages Repository", error);
             throw new InternalServerError();
+        }
+    }
+
+    async getPostByArrayOfIds(ids: string[]) {
+        try {
+            return await client.post.findMany({
+                where: {
+                    id: {
+                        in: ids
+                    }
+                },
+                select: {
+                    id: true,
+                    content: true,
+                    media: {
+                        select: {
+                            id: true,
+                            type: true,
+                            url: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            id: true,
+                            username: true,
+                            name: true,
+                            image: true
+                        }
+                    },
+                    tags: {
+                        select: {
+                            tag: {
+                                select: {
+                                    id: true,
+                                    name: true
+                                }
+                            }
+                        }
+                    },
+                    createdAt: true,
+                    updatedAt: true,
+                    isEdited: true,
+                }
+            })
+        } catch (error) {
+            console.error("Error in getPostByArrayOfIds Repository", error)
+            throw new InternalServerError()
         }
     }
 

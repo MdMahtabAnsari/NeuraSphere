@@ -22,9 +22,16 @@ postRouter.get('/me',queryValidator(pageLimitObj),accessTokenValidator(),postCon
 // @ts-ignore
 postRouter.get('/search',queryValidator(getPostByUsernamesAndUseridAndNameAndMobileAndEmail),accessTokenValidator(),postController.getPostByUsernamesAndUseridAndNameAndMobileAndEmail);
 // @ts-ignore
+
+postRouter.get('/suggestions',queryValidator(pageLimitObj),accessTokenValidator(),postController.getPostSuggestion);
+// @ts-ignore
+postRouter.get('/viral',queryValidator(pageLimitObj),accessTokenValidator(),postController.getViralPosts);
+// @ts-ignore
 postRouter.get('/:id',paramsValidator(idObject),accessTokenValidator(),postController.getPostById);
 // @ts-ignore
 postRouter.get('/other/:id',paramsValidator(idObject),queryValidator(pageLimitObj),accessTokenValidator(),postController.getOtherUserPosts);
+
+
 
 
 export default postRouter;

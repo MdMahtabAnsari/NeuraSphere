@@ -15,6 +15,9 @@ const serverConfig = {
     EMAIL_SECURE: process.env.EMAIL_SECURE === "true",
     OTP_EXPIRES_IN: process.env.OTP_EXPIRES_IN || "10m",
     REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
+    NEO4J_URL: process.env.NEO4J_URL || "bolt://localhost:7687",
+    NEO4J_USER: process.env.NEO4J_USER || "neo4j",
+    NEO4J_PASSWORD: process.env.NEO4J_PASSWORD || "password"
 }
 
 export default serverConfig;

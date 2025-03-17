@@ -124,6 +124,33 @@ class PostController{
             next(error);
         }
     }
+
+    async getPostSuggestion(req:CustomRequest,res:Response,next:NextFunction){
+        try{
+            const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
+            const posts = await postService.getPostSuggestion(req.user.id,page?parseInt(page):1,limit?parseInt(limit):10);
+            res.status(200).json({
+                message: "Posts fetched successfully",
+                status: "success",
+                data: posts,
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+    async getViralPosts(req:CustomRequest,res:Response,next:NextFunction){
+        try{
+            const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
+            const posts = await postService.getViralPosts(req.user.id,page?parseInt(page):1,limit?parseInt(limit):10);
+            res.status(200).json({
+                message: "Posts fetched successfully",
+                status: "success",
+                data: posts,
+            });
+        }catch(error){
+            next(error);
+        }
+    }
 }
 
 export const postController = new PostController();

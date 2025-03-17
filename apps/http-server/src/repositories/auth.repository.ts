@@ -6,14 +6,11 @@ import {z} from "zod";
 class AuthRepository {
     async signup(data:z.infer<typeof signup>){
         try{
-            const user = await client.user.create({
+            return await client.user.create({
                 data: {
                     ...data
                 }
             });
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {password,...rest} = user;
-            return rest;
 
         }catch(error){
             console.error(`Error in signup Repository: ${error}`);

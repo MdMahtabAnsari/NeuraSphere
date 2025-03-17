@@ -9,6 +9,7 @@ import serverConfig from "../configs/server.config";
 import ms from "ms";
 import { jwtService } from "./jwt.service";
 import { jwt } from "@workspace/schema/jwt";
+import { userGraph } from "../graph/user.graph";
 
 class OtpService{
 
@@ -67,7 +68,8 @@ class OtpService{
                 throw new UnauthorisedError('Otp');
             }
             await otpRepository.deleteOtp({userId:user.id,type:"VerifyEmail"});
-            await userRepository.makeUserVerified(user.id);
+            const verifiedUser = await userRepository.makeUserVerified(user.id);
+            await userGraph.updateUser(verifiedUser);
             const jwtPayload:z.infer<typeof jwt> = {
                 username:user.username,
                 id:user.id,

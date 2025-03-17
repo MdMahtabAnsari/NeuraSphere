@@ -24,7 +24,8 @@
     "./post":"./src/post.ts",
     "./reaction":"./src/reaction.ts",
     "./comment":"./src/comment.ts",
-    "./views":"./src/views.ts"
+    "./views":"./src/views.ts",
+    "./friend":"./src/friend.ts"
 
   }
 }
