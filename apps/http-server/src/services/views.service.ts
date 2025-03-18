@@ -1,6 +1,7 @@
 import {viewsRepository} from "../repositories/views.repository";
 import {viewsRedis} from "../redis/views.redis";
 import {AppError,InternalServerError} from "../utils/errors";
+import { viewsGraph } from "../graph/views.graph";
 
 class ViewsService {
     async createView(postId: string, userId: string) {
@@ -9,6 +10,7 @@ class ViewsService {
             let viewsCount = 0;
             if(views){
                 viewsCount = await viewsRepository.getPostViews(postId);
+                await viewsGraph.createView(userId,postId);
                 await viewsRedis.setViews(postId, viewsCount);
             }
             return viewsCount;
