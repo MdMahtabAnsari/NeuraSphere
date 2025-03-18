@@ -221,7 +221,7 @@ class FriendGraph{
             const query = `
                 MATCH (u:User {id: $userId})
                 OPTIONAL MATCH (u)-[:FRIENDS]->(:User)-[:FRIENDS]->(m:User)
-                OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED_IN]-(m1:User)
+                OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED]-(m1:User)
                 WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1)) as friends
                 UNWIND friends as friend
                 WITH u,friend
@@ -258,7 +258,7 @@ class FriendGraph{
             const query = `
                 MATCH (u:User {id: $userId})
                 OPTIONAL MATCH (u)-[:FRIENDS]->(:User)-[:FRIENDS]->(m:User)
-                OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED_IN]-(m1:User)
+                OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED]-(m1:User)
                 WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1)) as friends
                 UNWIND friends as friend
                 WITH u,friend

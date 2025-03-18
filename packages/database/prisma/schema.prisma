@@ -221,7 +221,8 @@ enum Notification_Type {
   Dislike
   Follow
   Unfollow
-  Mention
+  Request
+  Accept
 }
 
 model Friends {
