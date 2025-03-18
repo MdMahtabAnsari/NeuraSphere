@@ -63,7 +63,16 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in createFriendRequest", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError();
@@ -108,7 +117,15 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in acceptFriendRequest", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError();
@@ -153,7 +170,15 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in rejectFriendRequest", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError();
@@ -205,7 +230,15 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in blockFriend", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError();
@@ -235,7 +268,15 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in unblockFriend", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError
@@ -375,7 +416,15 @@ class FriendRepository {
 
         } catch (error) {
             console.error("Error in removeFriend", error);
-            if (error instanceof AppError) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
                 throw error;
             }
             throw new InternalServerError();
