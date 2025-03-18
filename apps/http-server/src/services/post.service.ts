@@ -10,6 +10,7 @@ import { commentService } from './comment.service';
 import { commentReactionService } from "./commentReaction.service";
 import { viewsService } from "./views.service";
 import { postGraph } from '../graph/post.graph';
+import { tagGraph } from '../graph/tag.graph';
 
 interface PostsData {
     content: string | null
@@ -41,7 +42,8 @@ class PostService {
                 await mediaRepository.createMedia(post.id, data.media);
             }
             if (tags.length) {
-                await tagRepository.createTags(post.id, tags);
+                const tagDetails = await tagRepository.createTags(post.id, tags);
+                await tagGraph.createPostTags(post.id, tagDetails);
             }
             const postDetails = await postRepository.getPostByIdWithAllData(post.id);
             return {
@@ -82,9 +84,11 @@ class PostService {
             const tags = data.content ? getTags(data.content) : [];
             const post = await postRepository.updatePost(data);
             if (tags.length) {
-                await tagRepository.updateTags(post.id, tags);
+                const tagDetails = await tagRepository.updateTags(post.id, tags);
+                await tagGraph.updatePostTags(post.id, tagDetails);
             } else {
                 await tagRepository.deleteTags(post.id);
+                await tagGraph.deletePostTags(post.id);
             }
             if (data.addMedia?.length) {
                 await mediaRepository.createMedia(post.id, data.addMedia);

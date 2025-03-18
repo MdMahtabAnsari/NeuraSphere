@@ -118,10 +118,10 @@ class PostGraph {
             AND NOT (u)-[:LIKES]->(post)
             AND NOT (u)-[:DISLIKES]->(post)
             AND NOT (u)-[:VIEWED]->(post)
-            RETURN post
             ORDER BY post.createdAt DESC
             SKIP toInteger($skip)
             LIMIT toInteger($limit)
+            RETURN post
             `;
             const result = await session.run(query, { userId, skip: (page - 1) * limit, limit });
             return result.records.map(record => record.get('p').properties);
@@ -175,7 +175,7 @@ class PostGraph {
             ORDER BY views DESC, likes DESC
             SKIP toInteger($skip)
             LIMIT toInteger($limit)
-            RETURN DISTINCT p
+            RETURN p
             `;
             const result = await session.run(query, { skip: (page - 1) * limit, limit });
             return result.records.map(record => record.get('p').properties);

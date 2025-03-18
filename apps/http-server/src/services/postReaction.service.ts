@@ -1,6 +1,7 @@
 import { postReactionRepository } from "../repositories/postReaction.repository";
 import { postReactionRedis } from "../redis/postReaction.redis";
 import { AppError, InternalServerError } from "../utils/errors";
+import { postReactionGraph } from "../graph/postReaction.graph";
 
 class PostReactionService {
     async likePost(userId: string, postId: string) {
@@ -26,7 +27,7 @@ class PostReactionService {
                         await postReactionRedis.setLike(postId, likeCount);
                         likeCount = count;
                 }
-
+                await postReactionGraph.likePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: true, dislike: false });
             }
             return likeCount;
@@ -63,6 +64,7 @@ class PostReactionService {
                     await postReactionRedis.setDislike(postId, count);
                     dislikeCount = count;
                 }
+                await postReactionGraph.dislikePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: true });
             }
             return dislikeCount;
@@ -139,6 +141,7 @@ class PostReactionService {
                         await postReactionRedis.setLike(postId, count);
                         likeCount = count;
                 }
+                await postReactionGraph.unlikePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: false });
             }
             return likeCount;
@@ -165,6 +168,7 @@ class PostReactionService {
                         await postReactionRedis.setDislike(postId, count);
                         dislikeCount = count;
                 }
+                await postReactionGraph.removeDislikePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: false });
             }
             return dislikeCount;

@@ -6,7 +6,7 @@ import { tags } from "@workspace/schema/post"
 class TagRepository {
     async createTags(postId: string, data: z.infer<typeof tags>) {
         try {
-            await Promise.all(data.map(async (tag) => {
+            return await Promise.all(data.map(async (tag) => {
                 const tagData = await client.tag.upsert({
                     where: { name: tag },
                     update: {},
@@ -18,9 +18,9 @@ class TagRepository {
                         tagId: tagData.id
                     }
                 })
+                return tagData
             }
             ));
-            return true
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2025") {
@@ -38,8 +38,7 @@ class TagRepository {
                     postId: postId
                 }
             })
-            await this.createTags(postId, data)
-            return true
+            return await this.createTags(postId, data)
         } catch (error) {
             throw new InternalServerError()
         }
