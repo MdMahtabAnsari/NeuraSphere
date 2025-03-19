@@ -10,6 +10,7 @@ import commentReactionRouter from './commentReaction.route';
 import viewsRoute from "./views.route";
 import friendRouter from './friend.route';
 import interestRouter from './interest.route';
+import followerRouter from './follower.route';
 
 const routes = (app:Express) => {
     app.use("/api/auth",authRoute);
@@ -22,6 +23,7 @@ const routes = (app:Express) => {
     app.use("/api/comments/reactions",commentReactionRouter);
     app.use("/api/views",viewsRoute);
     app.use("/api/friends",friendRouter);
+    app.use("/api/followers",followerRouter);
     app.use(errorHandler);
 }
 

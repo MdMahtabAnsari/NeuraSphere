@@ -1,7 +1,7 @@
 import { friendService } from "../services/friend.service";
-import {Response,NextFunction } from "express";
+import {Request,Response,NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
-import {friendIdObj,pageLimitObj} from "@workspace/schema/friend";
+import {friendIdObj,pageLimitObj,idObj} from "@workspace/schema/friend";
 import {z} from "zod";
 
 class FriendController{
@@ -55,7 +55,7 @@ class FriendController{
     async removeFriend(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const userId = req.user.id;
-            const {friendId} = req.body as z.infer<typeof friendIdObj>;
+            const {friendId} = req.params as z.infer<typeof friendIdObj>;
             const removedFriend=await friendService.removeFriend(userId,friendId);
             res.status(200).json({
                 message:"Friend removed successfully",
@@ -84,11 +84,11 @@ class FriendController{
         }
     }
 
-    async getFriends(req:CustomRequest,res:Response,next:NextFunction){
+    async getFriends(req:Request,res:Response,next:NextFunction){
         try{
-            const userId = req.user.id;
+            const {id} = req.params as z.infer<typeof idObj>;
             const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
-            const friends = await friendService.getFriends(userId,page?parseInt(page):1,limit?parseInt(limit):10);
+            const friends = await friendService.getFriends(id,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message:"Friends fetched successfully",
                 status:"success",

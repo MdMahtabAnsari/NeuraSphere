@@ -26,7 +26,8 @@
     "./comment":"./src/comment.ts",
     "./views":"./src/views.ts",
     "./friend":"./src/friend.ts",
-    "./interest":"./src/interest.ts"
+    "./interest":"./src/interest.ts",
+    "./follower":"./src/follower.ts"
 
   }
 }

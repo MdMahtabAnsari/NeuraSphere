@@ -163,9 +163,8 @@ class FriendService {
         try {
             const mutual = await friendGraph.getMutualFriends(userId, friendId, page, limit);
             const totalPages = await friendGraph.getMutualFriendsPages(userId, friendId, limit);
-            const mutalFriends = mutual.map(friend => { return { id: friend.id, name: friend.name, image: friend.image } });
             return {
-                mutual: mutalFriends,
+                mutual,
                 totalPages,
                 currentPage: page
             };
@@ -182,9 +181,8 @@ class FriendService {
         try {
             const suggestions = await friendGraph.getFriendSuggestions(userId, page, limit);
             const totalPages = await friendGraph.getFriendSuggestionsPages(userId, limit);
-            const suggestedFriends = suggestions.map(friend => { return { id: friend.id, name: friend.name, image: friend.image } });
             return {
-                suggestions: suggestedFriends,
+                suggestions,
                 totalPages,
                 currentPage: page
             };

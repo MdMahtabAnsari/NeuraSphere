@@ -185,7 +185,15 @@ class FriendGraph{
                 limit
             });
             console.log(result.records.map(record => record.get('m').properties));
-            return result.records.map(record => record.get('m').properties);
+            return result.records.map(record => record.get('m').properties).map((user: any) => {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    image: user.image
+                }
+            }
+            );
         } catch (error) {
             console.error("Error in getting mutual friends", error);
             throw new InternalServerError("Error in getting mutual friends");
@@ -222,7 +230,9 @@ class FriendGraph{
                 MATCH (u:User {id: $userId})
                 OPTIONAL MATCH (u)-[:FRIENDS]->(:User)-[:FRIENDS]->(m:User)
                 OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED]-(m1:User)
-                WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1)) as friends
+                OPTIONAL MATCH (u)-[:LIKES]->(:Post)<-[:POSTED]-(m2:User)
+                OPTIONAL MATCH (u)-[:VIEWED]->(:Post)<-[:POSTED]-(m3:User)
+                WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1) + collect(DISTINCT m2) + collect(DISTINCT m3)) as friends
                 UNWIND friends as friend
                 WITH u,friend
                 WHERE NOT (u)-[:FRIENDS]->(friend)
@@ -242,7 +252,15 @@ class FriendGraph{
                 limit
             });
             console.log(result.records.map(record => record.get('friend').properties));
-            return result.records.map(record => record.get('friend').properties);
+            return result.records.map(record => record.get('friend').properties).map((user: any) => {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    image: user.image
+                }
+            }
+            );
         } catch (error) {
             console.error("Error in getting friend suggestions", error);
             throw new InternalServerError("Error in getting friend suggestions");
@@ -259,7 +277,9 @@ class FriendGraph{
                 MATCH (u:User {id: $userId})
                 OPTIONAL MATCH (u)-[:FRIENDS]->(:User)-[:FRIENDS]->(m:User)
                 OPTIONAL MATCH (u)-[:INTERESTED]->(:Interest)<-[:INTERESTED]-(m1:User)
-                WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1)) as friends
+                OPTIONAL MATCH (u)-[:LIKES]->(:Post)<-[:POSTED]-(m2:User)
+                OPTIONAL MATCH (u)-[:VIEWED]->(:Post)<-[:POSTED]-(m3:User)
+                WITH u,apoc.coll.toSet(collect(DISTINCT m) + collect(DISTINCT m1) + collect(DISTINCT m2) + collect(DISTINCT m3)) as friends
                 UNWIND friends as friend
                 WITH u,friend
                 WHERE NOT (u)-[:FRIENDS]->(friend)
