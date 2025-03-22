@@ -29,3 +29,26 @@ export const updateUserOtpBasedPassword=z.object({
     newPassword: z.string({message:"newPassword must be string"}).min(8,{message:"newPassword must have at least 8 characters"}).max(20,{message:"newPassword must have at most 20 characters"}).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/, {message:"newPassword must have at least one uppercase letter, one lowercase letter, one number, and one special character"}),
 }).strip();
 
+export const identifierObj = z.object({
+    identifier: z.union([
+        z.string({message:"username must be string"}).trim().min(3,{message:"username must have at least 3 characters"}).max(20,{message:"username must have at most 20 characters"}).regex(/^[a-zA-Z0-9]*$/,{message:"username must have only alphanumeric characters"}),
+
+        z.string({message:"email must be string"}).trim().email({message:"email must be a valid email"}),
+
+        z.string({message:"mobile must be string"}).trim().regex(/^\d{10}$/, {message:"mobile must be a valid phone number"}),
+
+        z.string({message:"id must be string"}).uuid({message:"id must be a valid uuid"})
+    ]),
+}).strip();
+
+export const page = z.string({message:"page must be string"}).refine((value) => !isNaN(parseInt(value)) && parseInt(value)>0,{message:"page must be number and greater than 0"});
+export const limit = z.string({message:"limit must be string"}).refine((value) => !isNaN(parseInt(value)) && parseInt(value)>0,{message:"limit must be number and greater than 0"});
+
+
+export const pageLimitObj = z.object({
+    // page must be a number and greater than 0
+    page: page.optional(),
+    // limit must be a number and greater than 0
+    limit: limit.optional(),
+}).strip()
+

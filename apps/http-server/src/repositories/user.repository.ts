@@ -5,7 +5,7 @@ import { updateUser} from "@workspace/schema/user";
 
 
 class UserRepository{
-    async getUserByEmailOrUsernameOrMobile(data:string){
+    async getUserByEmailOrUsernameOrMobileOrId(data:string){
         try{
             return await client.user.findFirst({
                 where: {
@@ -18,6 +18,8 @@ class UserRepository{
                         },
                         {
                             mobile: data
+                        },{
+                            id: data
                         }
                     ]
                 }
@@ -118,6 +120,77 @@ class UserRepository{
             });
         }catch(error){
             console.error(`Error in makeUserUnverified Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async getUsresbyNameOrUsernameOrEmailOrMobile(data:string,page:number=1,limit:number=10){
+        try{
+            return await client.user.findMany({
+                where: {
+                    OR: [
+                        {
+                            email: {
+                                contains: data
+                            }
+                        },
+                        {
+                            username: {
+                                contains: data
+                            }
+                        },
+                        {
+                            name: {
+                                contains: data
+                            }
+                        },
+                        {
+                            mobile: {
+                                contains: data
+                            }
+                        }
+                    ]
+                },
+                skip: (page-1)*limit,
+                take: limit
+            });
+        }catch(error){
+            console.error(`Error in getUsresbyNameOrUsernameOrEmailOrMobile Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async getUsresbyNameOrUsernameOrEmailOrMobilePageCount(data:string,limit:number=10){
+        try{
+            const count = await client.user.count({
+                where: {
+                    OR: [
+                        {
+                            email: {
+                                contains: data
+                            }
+                        },
+                        {
+                            username: {
+                                contains: data
+                            }
+                        },
+                        {
+                            name: {
+                                contains: data
+                            }
+                        },
+                        {
+                            mobile: {
+                                contains: data
+                            }
+                        }
+                    ]
+                }
+            });
+            return Math.ceil(count/limit);
+        }catch(error){
+            console.error(`Error in getUsresbyNameOrUsernameOrEmailOrMobilePageCount Repository: ${error}`);
             throw new InternalServerError();
         }
     }

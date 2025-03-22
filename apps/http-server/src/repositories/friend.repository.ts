@@ -520,6 +520,64 @@ class FriendRepository {
         }
     }
 
+    async getFriendCount(userId: string) {
+        try {
+            const totalFriends = await client.friends.count({
+                where: {
+                    OR: [
+                        {
+                            senderId: userId,
+                            status: 'Accepted'
+                        },
+                        {
+                            receiverId: userId,
+                            status: 'Accepted'
+                        }
+                    ]
+                }
+            });
+            return totalFriends;
+
+        } catch (error) {
+            console.error("Error in getFriendCount", error);
+            throw new InternalServerError();
+
+        }
+    }
+
+    async getFriendRequestCount(userId: string) {
+        try {
+            const totalRequests = await client.friends.count({
+                where: {
+                    receiverId: userId,
+                    status: 'Pending'
+                }
+            });
+            return totalRequests;
+
+        } catch (error) {
+            console.error("Error in getFriendRequestCount", error);
+            throw new InternalServerError();
+
+        }
+    }
+
+    async getBlockedCount(userId: string) {
+        try {
+            const totalBlockedFriends = await client.friends.count({
+                where: {
+                    senderId: userId,
+                    status: 'Blocked'
+                }
+            });
+            return totalBlockedFriends;
+
+        } catch (error) {
+            console.error("Error in getBlockedCount", error);
+            throw new InternalServerError();
+
+        }
+    }
 
 }
 

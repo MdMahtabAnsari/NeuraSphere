@@ -1,9 +1,9 @@
 import { userService } from "../services/user.service";
-import { Response, NextFunction } from "express";
+import { Request,Response, NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
 import { cookieConfigGenerator } from "../configs/cookie.config";
 import { jwtService } from "../services/jwt.service";
-import { updateUser,updateUserOldPassword } from "@workspace/schema/user";
+import { updateUser,updateUserOldPassword,identifierObj,pageLimitObj } from "@workspace/schema/user";
 import {z} from "zod";
 
 
@@ -43,6 +43,35 @@ class UserController {
                 message: "Password updated successfully",
                 status: "success",
                 data: null
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getProfile(req: CustomRequest, res: Response, next: NextFunction) {
+        try {
+            const {identifier} = req.params as z.infer<typeof identifierObj>;
+            const user = await userService.getProfile(req.user.id,identifier);
+            res.status(200).json({
+                message: "User fetched successfully",
+                status: "success",
+                data: user
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUsers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {identifier} = req.params as z.infer<typeof identifierObj>;
+            const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
+            const users = await userService.getUsers(identifier,page?parseInt(page):1,limit?parseInt(limit):10);
+            res.status(200).json({
+                message: "Users fetched successfully",
+                status: "success",
+                data: users
             });
         } catch (error) {
             next(error);

@@ -29,7 +29,7 @@ class AuthService{
     }
     async login(data:z.infer<typeof login>){
         try{
-            const user = await userRepository.getUserByEmailOrUsernameOrMobile(data.identifier);
+            const user = await userRepository.getUserByEmailOrUsernameOrMobileOrId(data.identifier);
             if(!user){
                 throw new NotFoundError('User');
             }

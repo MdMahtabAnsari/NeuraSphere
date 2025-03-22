@@ -1,6 +1,7 @@
 import { friendRepository } from "../repositories/friend.repository";
 import { AppError, BadRequestError, InternalServerError } from "../utils/errors";
 import { friendGraph } from "../graph/friend.graph";
+import { friendRedis } from "../redis/friend.redis";
 
 
 class FriendService {
@@ -12,6 +13,16 @@ class FriendService {
             }
             const reguested = await friendRepository.createFriendRequest(userId, friendId);
             await friendGraph.createFriendRequest(userId, friendId);
+            if(reguested){
+                const cachedCount = await friendRedis.getFriendRequestCount(friendId);
+                if (cachedCount) {
+                    await friendRedis.incrementFriendRequestCount(friendId);
+                }
+                else {
+                    const count = await friendRepository.getFriendRequestCount(friendId);
+                    await friendRedis.setFriendRequestCount(friendId, count);
+                }
+            }
             return reguested;
         } catch (error) {
             if (error instanceof AppError) {
@@ -26,6 +37,24 @@ class FriendService {
         try {
             const accepted = await friendRepository.acceptFriendRequest(userId, friendId);
             await friendGraph.acceptFriendRequest(userId, friendId);
+            if(accepted){
+                const cachedCount = await friendRedis.getFriendRequestCount(userId);
+                if (cachedCount) {
+                    await friendRedis.decrementFriendRequestCount(userId);
+                }
+                else {
+                    const count = await friendRepository.getFriendRequestCount(userId);
+                    await friendRedis.setFriendRequestCount(userId, count);
+                }
+                const cachedFriendCount = await friendRedis.getFriendCount(friendId);
+                if (cachedFriendCount) {
+                    await friendRedis.incrementFriendCount(friendId);
+                }
+                else {
+                    const count = await friendRepository.getFriendCount(friendId);
+                    await friendRedis.setFriendCount(friendId, count);
+                }
+            }
             return accepted;
         } catch (error) {
             if (error instanceof AppError) {
@@ -40,6 +69,16 @@ class FriendService {
         try {
             const rejected = await friendRepository.rejectFriendRequest(userId, friendId);
             await friendGraph.rejectFriendRequest(userId, friendId);
+            if(rejected){
+                const cachedCount = await friendRedis.getFriendRequestCount(userId);
+                if (cachedCount) {
+                    await friendRedis.decrementFriendRequestCount(userId);
+                }
+                else {
+                    const count = await friendRepository.getFriendRequestCount(userId);
+                    await friendRedis.setFriendRequestCount(userId, count);
+                }
+            }
             return rejected;
         } catch (error) {
             if (error instanceof AppError) {
@@ -86,7 +125,7 @@ class FriendService {
 
     async blockFriend(userId: string, friendId: string) {
         try {
-            if(userId === friendId){
+            if (userId === friendId) {
                 throw new BadRequestError("You can't block yourself");
             }
             const blocked = await friendRepository.blockFriend(userId, friendId);
@@ -191,6 +230,60 @@ class FriendService {
                 throw error;
             }
             console.error("Error in FriendService.getFriendSuggestions", error);
+            throw new InternalServerError();
+        }
+    }
+
+    async getFriendCount(userId: string) {
+        try {
+            const cachedCount = await friendRedis.getFriendCount(userId);
+            if (cachedCount) {
+                return cachedCount;
+            }
+            const count = await friendRepository.getFriendCount(userId);
+            await friendRedis.setFriendCount(userId, count);
+            return count;
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
+            console.error("Error in FriendService.getFriendCount", error);
+            throw new InternalServerError();
+        }
+    }
+
+    async getFriendRequestCount(userId: string) {
+        try {
+            const cachedCount = await friendRedis.getFriendRequestCount(userId);
+            if (cachedCount) {
+                return cachedCount;
+            }
+            const count = await friendRepository.getFriendRequestCount(userId);
+            await friendRedis.setFriendRequestCount(userId, count);
+            return count;
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
+            console.error("Error in FriendService.getFriendRequestCount", error);
+            throw new InternalServerError();
+        }
+    }
+
+    async getBlockedCount(userId: string) {
+        try {
+            const cachedCount = await friendRedis.getBlockedCount(userId);
+            if (cachedCount) {
+                return cachedCount;
+            }
+            const count = await friendRepository.getBlockedCount(userId);
+            await friendRedis.setBlockedCount(userId, count);
+            return count;
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
+            console.error("Error in FriendService.getBlockedCount", error);
             throw new InternalServerError();
         }
     }
