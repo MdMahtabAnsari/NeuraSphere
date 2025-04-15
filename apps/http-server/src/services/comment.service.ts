@@ -4,7 +4,8 @@ import {z} from 'zod'
 import { commentRepository } from '../repositories/comment.repository'
 import { commentRedis } from '../redis/comment.redis';
 import {commentReactionService} from "./commentReaction.service";
-
+import { notificationService } from './notification.service';
+import { postRepository } from '../repositories/post.repository';
 class CommentService {
     async createComment(userId:string,data: z.infer<typeof comment>) {
         try{
@@ -17,6 +18,34 @@ class CommentService {
                 else{
                     const count = await commentRepository.getCommentCount({postId:data.postId})
                     await commentRedis.setCommentCount(data.postId,count)
+                }
+                if(newComment.parentId){
+                    const parentData = await commentRepository.getCommentById(newComment.parentId);
+                    if(parentData){
+                        if(userId!== parentData.userId){
+                            await notificationService.createNotification({
+                                senderId:userId,
+                                receiverId:parentData.userId,
+                                postId:newComment.postId,
+                                commentId:newComment.parentId,
+                                type:"Reply"
+                            })
+                        }
+                    }
+                }
+                else{
+                    const postData = await postRepository.getPostById(newComment.postId);
+                    if(postData){
+                        if(postData.userId!==userId){
+                            await notificationService.createNotification({
+                                senderId:userId,
+                                receiverId:postData.userId,
+                                postId:newComment.postId,
+                                commentId:newComment.id,
+                                type:"Comment"
+                            })
+                        }
+                    }
                 }
             }
             return await commentRepository.getCommentById(newComment.id)

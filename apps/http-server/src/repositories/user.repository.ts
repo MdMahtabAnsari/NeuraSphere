@@ -194,6 +194,60 @@ class UserRepository{
             throw new InternalServerError();
         }
     }
+
+    async isUsernameAvailable(username:string){
+        try{
+            const user = await client.user.findFirst({
+                where: {
+                    username
+                }
+            });
+            return !user;
+        }catch(error){
+            console.error(`Error in isUsernameAvailable Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+    async isEmailAvailable(email:string){
+        try{
+            const user = await client.user.findFirst({
+                where: {
+                    email
+                }
+            });
+            return !user;
+        }catch(error){
+            console.error(`Error in isEmailAvailable Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+    async isMobileAvailable(mobile:string){
+        try{
+            const user = await client.user.findFirst({
+                where: {
+                    mobile
+                }
+            });
+            return !user;
+        }catch(error){
+            console.error(`Error in isMobileAvailable Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async isValidEmail(email:string){
+        try{
+            const user = await client.user.findFirst({
+                where: {
+                    email
+                }
+            });
+            return !!user;
+        }catch(error){
+            console.error(`Error in isValidEmail Repository: ${error}`);
+            throw new InternalServerError();
+        }
+    }
 }
 
 export const userRepository = new UserRepository();

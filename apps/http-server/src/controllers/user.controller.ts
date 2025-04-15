@@ -1,10 +1,11 @@
 import { userService } from "../services/user.service";
-import { Request,Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
 import { cookieConfigGenerator } from "../configs/cookie.config";
 import { jwtService } from "../services/jwt.service";
-import { updateUser,updateUserOldPassword,identifierObj,pageLimitObj } from "@workspace/schema/user";
-import {z} from "zod";
+import { updateUser, updateUserOldPassword, identifierObj, pageLimitObj, usernameObj, emailObj, mobileObj } from '@workspace/schema/user';
+import { z } from "zod";
+import { paramsValidator } from '../validators/params.validator';
 
 
 class UserController {
@@ -51,8 +52,8 @@ class UserController {
 
     async getProfile(req: CustomRequest, res: Response, next: NextFunction) {
         try {
-            const {identifier} = req.params as z.infer<typeof identifierObj>;
-            const user = await userService.getProfile(req.user.id,identifier);
+            const { identifier } = req.params as z.infer<typeof identifierObj>;
+            const user = await userService.getProfile(req.user.id, identifier);
             res.status(200).json({
                 message: "User fetched successfully",
                 status: "success",
@@ -65,13 +66,66 @@ class UserController {
 
     async getUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            const {identifier} = req.params as z.infer<typeof identifierObj>;
-            const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
-            const users = await userService.getUsers(identifier,page?parseInt(page):1,limit?parseInt(limit):10);
+            const { identifier } = req.params as z.infer<typeof identifierObj>;
+            const { page, limit } = req.query as z.infer<typeof pageLimitObj>;
+            const users = await userService.getUsers(identifier, page ? parseInt(page) : 1, limit ? parseInt(limit) : 10);
             res.status(200).json({
                 message: "Users fetched successfully",
                 status: "success",
                 data: users
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+    async isUsernameAvailable(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { username } = req.params as z.infer<typeof usernameObj>;
+            const isAvailable = await userService.isUsernameAvailable(username);
+            res.status(200).json({
+                message: "Username availability fetched successfully",
+                status: "success",
+                data: isAvailable
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+    async isEmailAvailable(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { email } = req.params as z.infer<typeof emailObj>;
+            const isAvailable = await userService.isEmailAvailable(email);
+            res.status(200).json({
+                message: "Email availability fetched successfully",
+                status: "success",
+                data: isAvailable
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+    async isMobileAvailable(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { mobile } = req.params as z.infer<typeof mobileObj>;
+            const isAvailable = await userService.isMobileAvailable(mobile);
+            res.status(200).json({
+                message: "Mobile availability fetched successfully",
+                status: "success",
+                data: isAvailable
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async isValidEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { email } = req.params as z.infer<typeof emailObj>;
+            const isValid = await userService.isValidEmail(email);
+            res.status(200).json({
+                message: "Email validity fetched successfully",
+                status: "success",
+                data: isValid
             });
         } catch (error) {
             next(error);

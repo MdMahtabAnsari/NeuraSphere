@@ -155,6 +155,53 @@ class UserService {
             throw new InternalServerError();
         }
     }
+
+    async isUsernameAvailable(username:string){
+        try{
+            return await userRepository.isUsernameAvailable(username);
+        }catch(error){
+            if(error instanceof AppError){
+                throw error;
+            }
+            console.error(`Error in isUsernameAvailable Service: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async isEmailAvailable(email:string){
+        try{
+            return await userRepository.isEmailAvailable(email);
+        }catch(error){
+            if(error instanceof AppError){
+                throw error;
+            }
+            console.error(`Error in isEmailAvailable Service: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+    async isMobileAvailable(mobile:string){
+        try{
+            return await userRepository.isMobileAvailable(mobile);
+        }catch(error){
+            if(error instanceof AppError){
+                throw error;
+            }
+            console.error(`Error in isMobileAvailable Service: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async isValidEmail(email:string){
+        try{
+            return await userRepository.isValidEmail(email);
+        }catch(error){
+            if(error instanceof AppError){
+                throw error;
+            }
+            console.error(`Error in isValidEmail Service: ${error}`);
+            throw new InternalServerError();
+        }
+    }
 }
 
 export const userService = new UserService();

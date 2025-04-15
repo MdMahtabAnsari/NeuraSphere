@@ -17,7 +17,11 @@ const serverConfig = {
     REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
     NEO4J_URL: process.env.NEO4J_URL || "bolt://localhost:7687",
     NEO4J_USER: process.env.NEO4J_USER || "neo4j",
-    NEO4J_PASSWORD: process.env.NEO4J_PASSWORD || "password"
+    NEO4J_PASSWORD: process.env.NEO4J_PASSWORD || "password",
+    CORS_ORIGIN: process.env.CORS_ORIGIN? process.env.CORS_ORIGIN.split(",") : ["http://localhost:3000"],
+    CORS_CREDENTIALS: process.env.CORS_CREDENTIALS === "true",
+    CORS_METHODS: process.env.CORS_METHODS? process.env.CORS_METHODS.split(",") : ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    CORS_ALLOWED_HEADERS: process.env.CORS_ALLOWED_HEADERS? process.env.CORS_ALLOWED_HEADERS.split(",") : ["Content-Type", "Authorization", "Accept"],
 }
 
 export default serverConfig;

@@ -2,6 +2,7 @@ import { friendRepository } from "../repositories/friend.repository";
 import { AppError, BadRequestError, InternalServerError } from "../utils/errors";
 import { friendGraph } from "../graph/friend.graph";
 import { friendRedis } from "../redis/friend.redis";
+import { notificationService } from './notification.service';
 
 
 class FriendService {
@@ -11,9 +12,9 @@ class FriendService {
             if (userId === friendId) {
                 throw new BadRequestError("You can't send a friend request to yourself");
             }
-            const reguested = await friendRepository.createFriendRequest(userId, friendId);
+            const requested = await friendRepository.createFriendRequest(userId, friendId);
             await friendGraph.createFriendRequest(userId, friendId);
-            if(reguested){
+            if(requested){
                 const cachedCount = await friendRedis.getFriendRequestCount(friendId);
                 if (cachedCount) {
                     await friendRedis.incrementFriendRequestCount(friendId);
@@ -22,8 +23,13 @@ class FriendService {
                     const count = await friendRepository.getFriendRequestCount(friendId);
                     await friendRedis.setFriendRequestCount(friendId, count);
                 }
+                await notificationService.createNotification({
+                    senderId: userId,
+                    receiverId: friendId,
+                    type: 'Request',
+                });
             }
-            return reguested;
+            return requested;
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -54,6 +60,12 @@ class FriendService {
                     const count = await friendRepository.getFriendCount(friendId);
                     await friendRedis.setFriendCount(friendId, count);
                 }
+                await notificationService.createNotification({
+
+                    senderId: userId,
+                    receiverId: friendId,
+                    type: 'Accept',
+                });
             }
             return accepted;
         } catch (error) {

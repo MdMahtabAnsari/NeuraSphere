@@ -1,6 +1,7 @@
 import { commentReactionRepository } from "../repositories/commentReaction.repository";
 import { AppError, InternalServerError } from "../utils/errors";
 import { commentReactionRedis } from "../redis/commentReaction.redis";
+import { notificationService } from './notification.service';
 
 class CommentReactionService {
     async likeComment(userId: string, commentId: string, postId: string) {
@@ -28,6 +29,15 @@ class CommentReactionService {
                     likeCount = count;
                 }
                 await commentReactionRedis.setUserReactionStatus(postId, commentId, userId, { like: true, dislike: false });
+                if(userId!== like.like.userId){
+                    await notificationService.createNotification({
+                        senderId: userId,
+                        receiverId: like.like.userId,
+                        commentId: commentId,
+                        postId: postId,
+                        type: 'Like',
+                    });
+                }
             }
             return likeCount;
         } catch (error) {
@@ -64,6 +74,15 @@ class CommentReactionService {
                     dislikeCount = count;
                 }
                 await commentReactionRedis.setUserReactionStatus(postId, commentId, userId, { like: false, dislike: true });
+                if(userId!== dislike.dislike.userId){
+                    await notificationService.createNotification({
+                        senderId: userId,
+                        receiverId: dislike.dislike.userId,
+                        commentId: commentId,
+                        postId: postId,
+                        type: 'Dislike',
+                    });
+                }
             }
             return dislikeCount;
         } catch (error) {

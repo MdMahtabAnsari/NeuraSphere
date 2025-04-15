@@ -11,6 +11,7 @@ import viewsRoute from "./views.route";
 import friendRouter from './friend.route';
 import interestRouter from './interest.route';
 import followerRouter from './follower.route';
+import notificationRouter from './notification.route';
 
 const routes = (app:Express) => {
     app.use("/api/auth",authRoute);
@@ -24,6 +25,7 @@ const routes = (app:Express) => {
     app.use("/api/views",viewsRoute);
     app.use("/api/friends",friendRouter);
     app.use("/api/followers",followerRouter);
+    app.use("/api/notifications",notificationRouter);
     app.use(errorHandler);
 }
 

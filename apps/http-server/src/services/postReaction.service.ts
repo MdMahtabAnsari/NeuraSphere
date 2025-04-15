@@ -2,7 +2,7 @@ import { postReactionRepository } from "../repositories/postReaction.repository"
 import { postReactionRedis } from "../redis/postReaction.redis";
 import { AppError, InternalServerError } from "../utils/errors";
 import { postReactionGraph } from "../graph/postReaction.graph";
-
+import { notificationService } from './notification.service';
 class PostReactionService {
     async likePost(userId: string, postId: string) {
         try {
@@ -29,6 +29,15 @@ class PostReactionService {
                 }
                 await postReactionGraph.likePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: true, dislike: false });
+                if(like.like.userId!== userId) {
+                await notificationService.createNotification({
+                    senderId: userId,
+                    receiverId: like.like.userId,
+                    postId: postId,
+                    type: "Like",
+
+                });
+                }
             }
             return likeCount;
         } catch (error) {
@@ -66,6 +75,14 @@ class PostReactionService {
                 }
                 await postReactionGraph.dislikePost(postId, userId);
                 await postReactionRedis.setUserReactionStatus(postId, userId, { like: false, dislike: true });
+                if(dislike.dislike.userId!== userId) {
+                await notificationService.createNotification({
+                    senderId: userId,
+                    receiverId: dislike.dislike.userId,
+                    postId: postId,
+                    type: "Dislike",
+                });
+                }
             }
             return dislikeCount;
         } catch (error) {

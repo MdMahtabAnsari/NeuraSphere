@@ -2,6 +2,7 @@ import { followerGraph } from "../graph/follower.graph";
 import { followerRepository } from "../repositories/follower.repository";
 import { InternalServerError, AppError, BadRequestError } from "../utils/errors";
 import { followerRedis } from "../redis/follower.redis";
+import { notificationService } from './notification.service';
 
 class FollwerService {
     async followUser(userId: string, followingId: string) {
@@ -28,6 +29,12 @@ class FollwerService {
                     const count = await followerRepository.getFollowingCount(followingId)
                     await followerRedis.setFollowingCount(followingId, count)
                 }
+
+                await notificationService.createNotification({
+                    senderId: userId,
+                    receiverId: followingId,
+                    type: 'Follow',
+                });
             }
             return follow
 
@@ -65,6 +72,11 @@ class FollwerService {
                     const count = await followerRepository.getFollowingCount(followingId)
                     await followerRedis.setFollowingCount(followingId, count)
                 }
+                await notificationService.createNotification({
+                    senderId: userId,
+                    receiverId: followingId,
+                    type: 'Unfollow',
+                });
             }
             return unfollow
         } catch (error) {
