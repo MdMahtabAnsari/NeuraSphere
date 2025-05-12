@@ -90,9 +90,9 @@ export default function Page() {
         <div className="flex items-center justify-center h-screen w-screen">
             <Card className="sm:w-96 w-full h-full overflow-auto">
                 <CardHeader>
-                    <CardTitle className="text-center font-bold text-xl">Update Post</CardTitle>
+                    <CardTitle className="text-center font-bold text-xl">Create Post</CardTitle>
                     <CardDescription className="text-center text-md text-gray-500 font-bold">
-                        Update your post and share your thoughts with the world.
+                        Create your post and share your thoughts with the world.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
