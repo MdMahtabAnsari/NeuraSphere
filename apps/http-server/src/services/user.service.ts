@@ -14,6 +14,7 @@ import { updateUserOldPassword } from "@workspace/schema/user";
 import { verify, hash } from "argon2";
 import { followerService } from "./follower.service";
 import { friendService } from "./friend.service";
+import { postRepository } from "../repositories/post.repository";
 
 class UserService {
     async updateUser(userId: string, data: z.infer<typeof updateUser>) {
@@ -127,8 +128,10 @@ class UserService {
             const followersCount = await followerService.getFollowerCount(user.id);
             const followingCount = await followerService.getFollowingCount(user.id);
             const friendsCount = await friendService.getFriendCount(user.id);
-            const isFriend = myId !== user.id ? await friendService.getFriendshipStatus(myId, user.id) : undefined;
-            return { profile, isFollowing, followersCount, followingCount, friendsCount, isFriend };
+            const friendStatus = myId !== user.id ? await friendService.getFriendshipStatus(myId, user.id) : undefined;
+            const postCount = await postRepository.getUserPostCount(user.id);
+            const isUserProfile = myId === user.id;
+            return { profile, isFollowing, followersCount, followingCount, friendsCount, friendStatus, postCount, isUserProfile };
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -138,6 +141,7 @@ class UserService {
         }
     }
 
+
     async getUsers(identifier:string,page:number=1,limit:number=10){
         try{
             const users = await userRepository.getUsresbyNameOrUsernameOrEmailOrMobile(identifier,page,limit);
@@ -145,8 +149,8 @@ class UserService {
                 const {password,...userWithoutPassword} = user;
                 return userWithoutPassword;
             });
-            const totalPages = await userRepository.getUsresbyNameOrUsernameOrEmailOrMobilePageCount(identifier,limit);
-            return {users:usersWithoutPassword,totalPages,currentPage:page};
+            const totalPage = await userRepository.getUsresbyNameOrUsernameOrEmailOrMobilePageCount(identifier,limit);
+            return {users:usersWithoutPassword,totalPage,currentPage:page};
         }catch(error){
             if(error instanceof AppError){
                 throw error;

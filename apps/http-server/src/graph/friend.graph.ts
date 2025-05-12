@@ -30,6 +30,30 @@ class FriendGraph{
             graph.closeSession(session);
         }
     }
+
+    async removeFriendRequest(userId: string, friendId: string) {
+        const session = graph.getSession();
+        try {
+            const query = `
+                MATCH (u:User {id: $userId})
+                MATCH (f:User {id: $friendId})
+                OPTIONAL MATCH (u)-[r:REQUESTED]->(f)
+                DELETE r
+                RETURN u,f
+            `;
+            const result = await session.run(query, {
+                userId,
+                friendId
+            });
+            console.log(result.records[0]?.get('u').properties);
+            return result.records[0]?.get('u').properties;
+        } catch (error) {
+            console.error("Error in removing friend request", error);
+            throw new InternalServerError("Error in removing friend request");
+        } finally {
+            graph.closeSession(session);
+        }
+    }
     async acceptFriendRequest(userId: string, friendId: string) {
         const session = graph.getSession();
         try {
@@ -241,6 +265,7 @@ class FriendGraph{
                 AND NOT (friend)-[:BLOCKED]->(u)
                 AND NOT (u)-[:REQUESTED]->(friend)
                 AND NOT (friend)-[:REQUESTED]->(u)
+                AND NOT u.id=friend.id
                 AND friend.isVerified=true
                 SKIP toInteger($skip)
                 LIMIT toInteger($limit)
@@ -288,6 +313,7 @@ class FriendGraph{
                 AND NOT (friend)-[:BLOCKED]->(u)
                 AND NOT (u)-[:REQUESTED]->(friend)
                 AND NOT (friend)-[:REQUESTED]->(u)
+                AND NOT u.id=friend.id
                 AND friend.isVerified=true
                 RETURN COUNT(friend) as count
             `;

@@ -118,7 +118,7 @@ class CommentRepository {
             return await client.comments.findMany({
                 where:{
                     postId:data.postId,
-                    parentId:data.commentId
+                    parentId:data.commentId? data.commentId : null
                 },
                 skip,
                 take:limit,
@@ -149,14 +149,9 @@ class CommentRepository {
             throw new InternalServerError()
         }
     }
-    async getCommentPages(data:z.infer<typeof postIdCommentIdObj>,limit:number=10) {
+    async getCommentPages(data:z.infer<typeof postIdCommentIdObj>,limit:number=10,isComment:boolean=false) {
         try{
-            const count = await client.comments.count({
-                where:{
-                    postId:data.postId,
-                    parentId:data.commentId
-                }
-            })
+            const count = await this.getCommentCount(data,isComment)
             return Math.ceil(count/limit)
         }
         catch(error){
@@ -165,8 +160,16 @@ class CommentRepository {
         }
     }
 
-    async getCommentCount(data:z.infer<typeof postIdCommentIdObj>) {
+    async getCommentCount(data:z.infer<typeof postIdCommentIdObj>,isComment:boolean=false) {
         try{
+            if(isComment){
+                return await client.comments.count({
+                    where:{
+                        postId:data.postId,
+                        parentId:data.commentId? data.commentId : null
+                    }
+                })
+            }
             return await client.comments.count({
                 where:{
                     postId:data.postId,

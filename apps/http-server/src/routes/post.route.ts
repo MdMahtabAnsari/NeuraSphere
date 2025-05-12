@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { postController } from "../controllers/post.controller";
-import { createPost,updatePost,idObject,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail } from "@workspace/schema/post";
+import { createPost,updatePost,idObject,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail,contentObj } from "@workspace/schema/post";
 import { bodyValidator } from "../validators/body.validator";
 import { accessTokenValidator } from "../validators/jwt.validator";
 import { paramsValidator } from "../validators/params.validator";
@@ -30,6 +30,8 @@ postRouter.get('/viral',queryValidator(pageLimitObj),accessTokenValidator(),post
 postRouter.get('/:id',paramsValidator(idObject),accessTokenValidator(),postController.getPostById);
 // @ts-ignore
 postRouter.get('/other/:id',paramsValidator(idObject),queryValidator(pageLimitObj),accessTokenValidator(),postController.getOtherUserPosts);
+
+postRouter.post('/ai/suggestion',bodyValidator(contentObj),accessTokenValidator(),postController.createPostSuggestion);
 
 
 

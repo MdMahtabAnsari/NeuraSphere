@@ -13,6 +13,9 @@ authRoute.post("/login",bodyValidator(login),authController.login);
 authRoute.post("/refresh",refreshTokenValidator(),authController.refresh);
 // @ts-ignore
 authRoute.post("/reset-password",bodyValidator(updateUserOtpBasedPassword),accessTokenValidator(),authController.updateUserOtpBasedPassword);
+// @ts-ignore
+authRoute.post("/is-logged-in",accessTokenValidator(),authController.isLoggedIn);
+
+authRoute.post("/logout",accessTokenValidator(),authController.logout);
 
 export default authRoute;
-

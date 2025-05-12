@@ -96,6 +96,7 @@ class FollowerGraph {
                 UNWIND suggestions as user
                 WITH a, user
                 WHERE NOT (a)-[:FOLLOWS]->(user)
+                AND NOT a.id = user.id
                 SKIP toInteger($skip)
                 LIMIT toInteger($limit)
                 RETURN user
@@ -133,6 +134,7 @@ class FollowerGraph {
                 UNWIND suggestions as user
                 WITH a, user
                 WHERE NOT (a)-[:FOLLOWS]->(user)
+                AND NOT a.id = user.id
                 RETURN count(user) as count
             `
             const result = await session.run(query, { userId })

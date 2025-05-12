@@ -6,6 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="e62889ab-c564-4f31-940f-514ea3a24513" name="Changes" comment="feat: enhance error handling in views service to propagate AppError">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/controllers/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/controllers/auth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/controllers/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/controllers/user.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/routes/auth.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/routes/auth.route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/routes/user.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/routes/user.route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/services/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/services/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/http-server/src/services/user.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/http-server/src/services/user.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/app/(auth)/signup/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/app/(auth)/signup/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/app/otp/email/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/app/otp/email/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/app/otp/forgot-password/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/app/otp/forgot-password/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/lib/api/auth.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/lib/api/auth.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/src/lib/api/user.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/src/lib/api/user.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/schema/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/schema/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +102,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-WS-251.23774.424" />
       </set>
     </attachedChunks>
   </component>
@@ -111,6 +129,8 @@
       <workItem from="1741322242347" duration="2689000" />
       <workItem from="1741325044732" duration="4034000" />
       <workItem from="1741344297584" duration="643000" />
+      <workItem from="1746539145620" duration="21000" />
+      <workItem from="1746685185401" duration="28000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add views functionality with controller, service, repository, and routes">
       <option name="closed" value="true" />

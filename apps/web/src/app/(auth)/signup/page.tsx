@@ -163,7 +163,7 @@ export default function Page() {
     }, [debouncedMobile]);
     return (
         <div className="flex items-center justify-center h-screen w-screen">
-            <Card className="sm:w-96 w-full">
+            <Card className="sm:w-96 w-full h-full overflow-auto">
                 <CardHeader>
                     <CardTitle className="text-center font-bold text-xl">
                         Sign Up
@@ -324,6 +324,7 @@ export default function Page() {
                                                         date > new Date() || date < new Date("1900-01-01")
                                                     }
                                                     initialFocus
+                                                    captionLayout="dropdown-buttons"
                                                 />
                                             </PopoverContent>
                                         </Popover>

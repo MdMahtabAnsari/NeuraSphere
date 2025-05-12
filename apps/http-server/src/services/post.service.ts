@@ -11,6 +11,7 @@ import { commentReactionService } from "./commentReaction.service";
 import { viewsService } from "./views.service";
 import { postGraph } from '../graph/post.graph';
 import { tagGraph } from '../graph/tag.graph';
+import { postLLM } from "../llm/post.llm";
 
 interface PostsData {
     content: string | null
@@ -126,19 +127,12 @@ class PostService {
 
     async getPostById(userId: string, postId: string) {
         try {
-            const post = postRepository.getPostByIdWithAllData(postId);
-            const postReaction = postReactionService.getPostReactionCount(postId);
-            const postReactionStatus = postReactionService.getUserReactionStatus(postId, userId);
-            const commentCount = commentService.getPostCommentsCount(postId);
-            const viewsCount = viewsService.getPostViews(postId);
-            return {
-                post,
-                reactions: postReaction,
-                reactionStatus: postReactionStatus,
-                comments: commentCount,
-                views: viewsCount
-
+            const post = await postRepository.getPostByIdWithAllData(postId);
+            if (!post) {
+                throw new NotFoundError("Post not found");
             }
+            const postsWithReaction = await this.getPostMetaData([post], userId);
+            return postsWithReaction[0];
         } catch (error) {
             if (error instanceof AppError) {
                 throw error;
@@ -237,12 +231,14 @@ class PostService {
                 const reactionStatus = await postReactionService.getUserReactionStatus(userId, post.id);
                 const commentCount = await commentService.getPostCommentsCount(post.id);
                 const viewsCount = await viewsService.getPostViews(post.id);
+                const isUserPost = userId === post.user.id;
                 return {
                     ...post,
                     reactions: reactionCount,
                     reactionStatus,
                     comments: commentCount,
-                    views: viewsCount
+                    views: viewsCount,
+                    isUserPost
                 };
             }
             ));
@@ -289,6 +285,18 @@ class PostService {
             }
             console.error("Error in getViralPosts service", error);
             throw new InternalServerError();
+        }
+    }
+
+    async createPostSuggestion(topic: string) {
+        try {
+            return await postLLM.createPostSuggestion(topic);
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
+            console.error("Error creating post suggestion:", error);
+            throw new InternalServerError("Failed to create post suggestion");
         }
     }
 

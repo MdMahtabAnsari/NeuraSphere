@@ -1,7 +1,7 @@
 import { postService } from "../services/post.service";
-import {Response,NextFunction } from "express";
+import {Request,Response,NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
-import { createPost,updatePost,id,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail } from "@workspace/schema/post";
+import { createPost,updatePost,id,getPostByTags,pageLimitObj,getPostByUsernamesAndUseridAndNameAndMobileAndEmail,contentObj} from "@workspace/schema/post";
 import { z } from "zod";
 
 class PostController{
@@ -99,7 +99,7 @@ class PostController{
     async getOtherUserPosts(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const {page,limit} = req.query as z.infer<typeof pageLimitObj>;
-            const userId = req.params.userId as z.infer<typeof id>;
+            const userId = req.params.id as z.infer<typeof id>;
             const posts = await postService.getUserPosts(req.user.id,userId,page?parseInt(page):1,limit?parseInt(limit):10);
             res.status(200).json({
                 message: "Posts fetched successfully",
@@ -146,6 +146,20 @@ class PostController{
                 message: "Posts fetched successfully",
                 status: "success",
                 data: posts,
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+
+    async createPostSuggestion(req:Request,res:Response,next:NextFunction){
+        try{
+            const {content} = req.body as z.infer<typeof contentObj>;
+            const post = await postService.createPostSuggestion(content?content:"");
+            res.status(201).json({
+                message: "Post suggestion created successfully",
+                status: "success",
+                data: post,
             });
         }catch(error){
             next(error);

@@ -79,6 +79,48 @@ class FriendRepository {
         }
     }
 
+    async removeFriendRequest(senderId: string, receiverId: string) {
+        try {
+            const isFriendRequestExits = await client.friends.findFirst({
+                where: {
+                    senderId: senderId,
+                    receiverId: receiverId
+                }
+            });
+            if (!isFriendRequestExits) {
+                throw new NotFoundError('Friend request');
+            }
+            else if (isFriendRequestExits.status === 'Accepted') {
+                throw new ConflictError('Friend request already accepted');
+            }
+            else if (isFriendRequestExits.status === 'Blocked') {
+                throw new ConflictError('You are blocked by receiver');
+            }
+            else if (isFriendRequestExits.status === 'Rejected') {
+                throw new ConflictError('Friend request is rejected');
+            }
+            return await client.friends.delete({
+                where: {
+                    id: isFriendRequestExits.id
+                }
+            });
+
+        } catch (error) {
+            console.error("Error in removeFriendRequest", error);
+            if(error instanceof Prisma.PrismaClientKnownRequestError){
+                if(error.code === 'P2025'){
+                    throw new BadRequestError('Invalid user id');
+                }
+                else if(error.code === 'P2020'){
+                    throw new BadRequestError('Invalid friend id');
+                }
+            }
+            else if (error instanceof AppError) {
+                throw error;
+            }
+            throw new InternalServerError();
+        }
+    }
     async acceptFriendRequest(senderId: string, receiverId: string) {
         try {
             const isFriendRequestExits = await client.friends.findFirst({
@@ -441,7 +483,46 @@ class FriendRepository {
                 }
             });
             if (isReceiverExits) {
-                return isReceiverExits;
+                if(isReceiverExits.status === 'Accepted'){
+                    return {
+                        accepted: true,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: false,
+                    };
+                }
+                if (isReceiverExits.status === 'Rejected') {
+                    return {
+                        accepted: false,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: true,
+                    };
+                }
+                if (isReceiverExits.status === 'Blocked') {
+                    return {
+                        accepted: false,
+                        senderBlocked: true,
+                        receiverBlocked: true,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: false
+                    };
+                }
+                if (isReceiverExits.status === 'Pending') {
+                    return {
+                        accepted: false,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: false,
+                        receiverPending: true,
+                        rejected: false
+                    };
+                }
             }
             const isSenderExits = await client.friends.findFirst({
                 where: {
@@ -450,9 +531,56 @@ class FriendRepository {
                 }
             });
             if (isSenderExits) {
-                return isSenderExits;
+                if(isSenderExits.status === 'Accepted'){
+                    return {
+                        accepted: true,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: false
+                    };
+                }
+                if (isSenderExits.status === 'Rejected') {
+                    return {
+                        accepted: false,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: true
+                    };
+                }
+                if (isSenderExits.status === 'Blocked') {
+                    return {
+                        accepted: false,
+                        senderBlocked: true,
+                        receiverBlocked: true,
+                        senderPending: false,
+                        receiverPending: false,
+                        rejected: false
+                    };
+                }
+                if (isSenderExits.status === 'Pending') {
+                    return {
+                        accepted: false,
+                        senderBlocked: false,
+                        receiverBlocked: false,
+                        senderPending: true,
+                        receiverPending: false,
+                        rejected: false
+                    };
+                }
+
             }
-            return null;
+            return {
+                accepted: false,
+                senderBlocked: false,
+                receiverBlocked: false,
+                senderPending: false,
+                receiverPending: false,
+                rejected: false
+            };
 
         } catch (error) {
             console.error("Error in getFriendshipStatus", error);

@@ -1,7 +1,7 @@
 import { commentService } from "../services/comment.service";
 import {Request,Response,NextFunction } from "express";
 import { CustomRequest } from "../types/customRuquest";
-import { comment,updateComment,id,getComments } from "@workspace/schema/comment";
+import { comment,updateComment,id,getComments,commentSuggestion } from "@workspace/schema/comment";
 import {z} from 'zod'
 
 
@@ -57,14 +57,29 @@ class CommentController {
         }
     }
 
-    async getComments(req: Request, res: Response, next: NextFunction) {
+    async getComments(req: CustomRequest, res: Response, next: NextFunction) {
         try {
             const {postId,commentId,page,limit} = req.query as z.infer<typeof getComments>
-            const comments = await commentService.getComments({postId,commentId},page?parseInt(page):1,limit?parseInt(limit):10)
+            const comments = await commentService.getComments(req.user.id,{postId,commentId},page?parseInt(page):1,limit?parseInt(limit):10)
             res.status(200).json({
                 message: "Comments fetched successfully",
                 status: "success",
                 data: comments
+            })
+        }
+        catch(error){
+            next(error)
+        }
+    }
+
+    async commentSuggestion(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {postId,parentId} = req.body as z.infer<typeof commentSuggestion>
+            const suggestion = await commentService.createCommentSuggestion({postId,parentId})
+            res.status(200).json({
+                message: "Comment suggestion fetched successfully",
+                status: "success",
+                data: suggestion
             })
         }
         catch(error){

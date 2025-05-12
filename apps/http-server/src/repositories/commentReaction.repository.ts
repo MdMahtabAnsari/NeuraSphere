@@ -198,7 +198,7 @@ class CommentReactionRepository{
             return { like: false, dislike: false };
         }catch(error){
             console.error('Error getting user reaction status from database', error);
-            return null;
+            throw new InternalServerError();
         }
     }
 

@@ -17,6 +17,8 @@ friendRouter.get("/blocked", queryValidator(pageLimitObj), accessTokenValidator(
 // @ts-ignore
 friendRouter.post("/request", bodyValidator(friendIdObj), accessTokenValidator(),friendController.createFriendRequest);
 // @ts-ignore
+friendRouter.post("/remove-request", bodyValidator(friendIdObj), accessTokenValidator(),friendController.removeFriendRequest);
+// @ts-ignore
 friendRouter.post("/accept", bodyValidator(friendIdObj), accessTokenValidator(),friendController.acceptFriendRequest);
 // @ts-ignore
 friendRouter.post("/reject", bodyValidator(friendIdObj), accessTokenValidator(),friendController.rejectFriendRequest);
@@ -25,7 +27,7 @@ friendRouter.get("/requests", queryValidator(pageLimitObj), accessTokenValidator
 // @ts-ignore
 friendRouter.get("/suggestions", queryValidator(pageLimitObj), accessTokenValidator(),friendController.getFriendSuggestions);
 // @ts-ignore
-friendRouter.delete("/remove/:friendId", paramsValidator(friendIdObj), accessTokenValidator(),friendController.removeFriend);
+friendRouter.post("/remove-friend", bodyValidator(friendIdObj), accessTokenValidator(),friendController.removeFriend);
 // @ts-ignore
 friendRouter.get('/status/:friendId', paramsValidator(friendIdObj),accessTokenValidator() ,friendController.getFriendshipStatus);
 // @ts-ignore

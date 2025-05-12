@@ -39,6 +39,33 @@ class FriendService {
         }
     }
 
+    async removeFriendRequest(userId: string, friendId: string) {
+        try {
+            if(userId === friendId) {
+                throw new BadRequestError("You can't remove a friend request to yourself");
+            }
+            const removed = await friendRepository.removeFriendRequest(userId, friendId);
+            await friendGraph.removeFriendRequest(userId, friendId);
+            if(removed){
+                const cachedCount = await friendRedis.getFriendRequestCount(friendId);
+                if (cachedCount) {
+                    await friendRedis.decrementFriendRequestCount(friendId);
+                }
+                else {
+                    const count = await friendRepository.getFriendRequestCount(friendId);
+                    await friendRedis.setFriendRequestCount(friendId, count);
+                }
+            }
+            return removed;
+        } catch (error) {
+            if (error instanceof AppError) {
+                throw error;
+            }
+            console.error("Error in FriendService.removeFriendRequest", error);
+            throw new InternalServerError("Error in FriendService.removeFriendRequest");
+        }
+    }
+
     async acceptFriendRequest(userId: string, friendId: string) {
         try {
             const accepted = await friendRepository.acceptFriendRequest(userId, friendId);
@@ -102,7 +129,7 @@ class FriendService {
     }
     async getFriendRequests(userId: string, page: number = 1, limit: number = 10) {
         try {
-            const requests = await friendRepository.getBlockedFriendList(userId, page, limit);
+            const requests = await friendRepository.getFriendRequestList(userId, page, limit);
             const totalPages = await friendRepository.getFriendRequestsPages(userId, limit);
             return {
                 requests,

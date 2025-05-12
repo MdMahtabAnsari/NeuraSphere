@@ -64,6 +64,19 @@ class UserController {
         }
     }
 
+    async getMyProfile(req: CustomRequest, res: Response, next: NextFunction) {
+        try {
+            const user = await userService.getProfile(req.user.id, req.user.id);
+            res.status(200).json({
+                message: "User fetched successfully",
+                status: "success",
+                data: user
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const { identifier } = req.params as z.infer<typeof identifierObj>;

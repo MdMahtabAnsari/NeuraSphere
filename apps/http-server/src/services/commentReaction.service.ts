@@ -28,7 +28,6 @@ class CommentReactionService {
                     await commentReactionRedis.setLike(postId, commentId, count);
                     likeCount = count;
                 }
-                await commentReactionRedis.setUserReactionStatus(postId, commentId, userId, { like: true, dislike: false });
                 if(userId!== like.like.userId){
                     await notificationService.createNotification({
                         senderId: userId,
@@ -194,6 +193,40 @@ class CommentReactionService {
             await commentReactionRedis.removeCacheOfComment(postId, commentId);
         } catch (error) {
             console.error('Error removing comment cache', error);
+            throw new InternalServerError();
+        }
+    }
+
+    async getCommentReactionCount(postId: string, commentId: string) {
+        try {
+            const cachedLikeCount = await commentReactionRedis.getLike(postId, commentId);
+            const cachedDislikeCount = await commentReactionRedis.getDislike(postId, commentId);
+            if(cachedLikeCount !== null && cachedDislikeCount !== null) {
+                return {
+                    likeCount: cachedLikeCount,
+                    dislikeCount: cachedDislikeCount
+                }
+            }
+            const likeCount = await commentReactionRepository.getCommentLikeCount(commentId);
+            const dislikeCount = await commentReactionRepository.getCommentDislikeCount(commentId);
+            await commentReactionRedis.setLike(postId, commentId, likeCount);
+            await commentReactionRedis.setDislike(postId, commentId, dislikeCount);
+            return {
+                likeCount,
+                dislikeCount
+            };
+        } catch (error) {
+            console.error('Error getting comment reaction count', error);
+            throw new InternalServerError();
+        }
+    }
+
+    async getUserReactionStatus(postId: string, commentId: string, userId: string) {
+        try {
+           return await commentReactionRepository.getCommentReactionStatus(commentId, userId);
+
+        } catch (error) {
+            console.error('Error getting user reaction status', error);
             throw new InternalServerError();
         }
     }

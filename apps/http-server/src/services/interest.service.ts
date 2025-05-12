@@ -52,7 +52,7 @@ class InterestService {
     async getUserInterests(userId: string, page: number = 1, limit: number = 10) {
         try {
             const intrests = await interestRepository.getUserInterests(userId, page, limit);
-            const totalPage = interestRepository.getUserInterestPages(userId, limit);
+            const totalPage = await interestRepository.getUserInterestPages(userId, limit);
             return { intrests, totalPage, currentPage: page };
         } catch (error) {
             console.error("Error in getting user interests", error);

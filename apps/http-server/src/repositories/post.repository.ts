@@ -447,6 +447,19 @@ class PostRepository {
         }
     }
 
+    async getUserPostCount(userId: string) {
+        try {
+            return await client.post.count({
+                where: {
+                    userId: userId
+                }
+            })
+        } catch (error) {
+            console.error("Error in getUserPostCount Repository", error)
+            throw new InternalServerError()
+        }
+    }
+
 }
 
 export const postRepository = new PostRepository()

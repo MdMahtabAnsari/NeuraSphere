@@ -61,7 +61,7 @@ class FollowerRepository {
                     follower: {
                         select: {
                             id: true,
-                            username: true,
+                            name: true,
                             email: true,
                             image: true
                         }
@@ -86,7 +86,7 @@ class FollowerRepository {
                     following: {
                         select: {
                             id: true,
-                            username: true,
+                            name: true,
                             email: true,
                             image: true
                         }

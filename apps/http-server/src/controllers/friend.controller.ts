@@ -55,7 +55,7 @@ class FriendController{
     async removeFriend(req:CustomRequest,res:Response,next:NextFunction){
         try{
             const userId = req.user.id;
-            const {friendId} = req.params as z.infer<typeof friendIdObj>;
+            const {friendId} = req.body as z.infer<typeof friendIdObj>;
             const removedFriend=await friendService.removeFriend(userId,friendId);
             res.status(200).json({
                 message:"Friend removed successfully",
@@ -112,6 +112,21 @@ class FriendController{
             });
         }
         catch(error){
+            next(error);
+        }
+    }
+
+    async removeFriendRequest(req:CustomRequest,res:Response,next:NextFunction){
+        try{
+            const userId = req.user.id;
+            const {friendId} = req.body as z.infer<typeof friendIdObj>;
+            const removed=await friendService.removeFriendRequest(userId,friendId);
+            res.status(200).json({
+                message:"Friend request removed successfully",
+                status:"success",
+                data:removed
+            });
+        } catch (error) {
             next(error);
         }
     }

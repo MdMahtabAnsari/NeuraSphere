@@ -81,6 +81,30 @@ class AuthController{
             next(error);
         }
     }
+
+    async isLoggedIn(req:CustomRequest,res:Response,next:NextFunction){
+        try{
+            res.status(200).json({
+                message:"User is logged in",
+                status:"success",
+                data:req.user,
+            });
+        }catch(error){
+            next(error);
+        }
+    }
+
+    async logout(req:Request,res:Response,next:NextFunction){
+        try{
+            res.clearCookie('accessToken').clearCookie('refreshToken').status(200).json({
+                message:"Logout successful",
+                status:"success",
+                data:null,
+            });
+        }catch(error){
+            next(error);
+        }
+    }
 }
 
 export const authController = new AuthController();

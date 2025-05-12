@@ -1,5 +1,5 @@
 import {viewsService} from "../services/views.service";
-import {Response,NextFunction} from "express";
+import {Response,NextFunction,Request} from "express";
 import {CustomRequest} from "../types/customRuquest";
 import {postIdObj} from "@workspace/schema/views";
 import {z} from "zod";

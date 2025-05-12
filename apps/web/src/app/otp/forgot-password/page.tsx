@@ -37,7 +37,7 @@ import {
 import {
     isValidEmail
 } from "@/lib/api/user";
-import { otpForgotPasswordRequest,otpForgotPasswordVerify } from "@/lib/api/otp"
+import { otpForgotPasswordRequest, otpForgotPasswordVerify } from "@/lib/api/otp"
 
 import { otpEmailVerify as otpEmailVerifySchema } from "@workspace/schema/otp"
 import { cn } from "@/lib/utils"
@@ -171,7 +171,7 @@ export default function Page() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="button" onClick={otpRequest} disabled={isCheckingEmail || isError} className="w-full cursor-pointer">
+                            <Button type="button" onClick={otpRequest} disabled={isCheckingEmail || isError || isEmailSent} className="w-full cursor-pointer">
                                 {isEmailSent ? (
                                     <span className="flex items-center justify-center">
                                         <RectangleEllipsis className="animate-spin h-4 w-4 mr-2" />
@@ -211,7 +211,7 @@ export default function Page() {
                                     )}
                                 />
                             )}
-                            <Button type="submit" disabled={!isEmailSent} className="w-full cursor-pointer">{
+                            <Button type="submit" disabled={!isEmailSent || form.formState.isSubmitting} className="w-full cursor-pointer">{
                                 form.formState.isSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <LoaderCircle className="animate-spin h-4 w-4 mr-2" />
@@ -222,7 +222,7 @@ export default function Page() {
                                         Verify OTP
                                     </span>
                                 )
-                                }</Button>
+                            }</Button>
                             {isEmailSent && (
                                 <Button type="button" onClick={handleReset} className="w-full cursor-pointer">Reset</Button>
                             )}
@@ -231,7 +231,7 @@ export default function Page() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                     <Button variant="link" onClick={() => router.push("/signup")} className=" cursor-pointer">
-                      Have not an account? Sign up
+                        Have not an account? Sign up
                     </Button>
                 </CardFooter>
             </Card>

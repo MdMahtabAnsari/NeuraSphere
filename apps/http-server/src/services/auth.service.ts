@@ -36,6 +36,10 @@ class AuthService{
             if(!user.password){
                 throw new BadRequestError('User has no password');
             }
+            if(!user.isVerified){
+                throw new UnauthorisedError('User is not verified');
+            }
+
             const valid = await verify(user.password,data.password);
             if(!valid){
                 throw new UnauthorisedError('Invalid password');
@@ -84,6 +88,23 @@ class AuthService{
                 throw error;
             }
             console.error(`Error in refresh Service: ${error}`);
+            throw new InternalServerError();
+        }
+    }
+
+    async isLoggedIn(userId: string){
+        try{
+            const user = await userRepository.getUserById(userId);
+            if(!user){
+                throw new NotFoundError('User');
+            }
+            const {password,...userWithoutPassword} = user;
+            return userWithoutPassword;
+        }catch(error){
+            if(error instanceof AppError){
+                throw error;
+            }
+            console.error(`Error in isLoggedIn Service: ${error}`);
             throw new InternalServerError();
         }
     }

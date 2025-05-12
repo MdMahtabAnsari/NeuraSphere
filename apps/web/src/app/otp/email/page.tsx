@@ -211,7 +211,7 @@ export default function Page() {
                                     )}
                                 />
                             )}
-                            <Button type="submit" disabled={!isEmailSent} className="w-full cursor-pointer">{
+                            <Button type="submit" disabled={!isEmailSent||form.formState.isSubmitting} className="w-full cursor-pointer">{
                                 form.formState.isSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <LoaderCircle className="animate-spin h-4 w-4 mr-2" />
@@ -229,7 +229,7 @@ export default function Page() {
                         </form>
                     </Form>
                 </CardContent>
-                <CardFooter className="flex justify-center">
+                <CardFooter className="flex flex-col items-center justify-center">
                     <Button variant="link" onClick={() => router.push("/signup")} className=" cursor-pointer">
                         Have not an account? Sign up
                     </Button>

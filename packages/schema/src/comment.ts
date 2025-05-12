@@ -10,6 +10,14 @@ export const comment = z.object({
     parentId: id.optional()
 });
 
+export const contentObj= z.object({
+    content: content
+}).strict();
+export const commentSuggestion = z.object({
+    postId: id,
+    parentId: id.optional(),
+}).strict();
+
 export const updateComment = z.object({
     id: id,
     content

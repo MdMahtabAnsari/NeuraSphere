@@ -28,7 +28,17 @@
     "./friend":"./src/friend.ts",
     "./interest":"./src/interest.ts",
     "./follower":"./src/follower.ts",
-    "./notification":"./src/notification.ts"
+    "./notification":"./src/notification.ts",
+    "./api-response/post":"./src/api-response/post.ts",
+    "./api-response/user":"./src/api-response/user.ts",
+    "./api-response/notification":"./src/api-response/notification.ts",
+    "./api-response/comment":"./src/api-response/comment.ts",
+    "./api-response/comment-reaction":"./src/api-response/comment-reaction.ts",
+    "./api-response/post-reaction":"./src/api-response/post-reaction.ts",
+    "./api-response/friend":"./src/api-response/friend.ts",
+    "./api-response/follower":"./src/api-response/follower.ts",
+    "./api-response/interest":"./src/api-response/interest.ts"
+
 
   }
 }

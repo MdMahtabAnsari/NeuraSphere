@@ -13,6 +13,8 @@ userRouter.put('/update',bodyValidator(updateUser),accessTokenValidator(),userCo
 // @ts-ignore
 userRouter.put("/update/password",bodyValidator(updateUserOldPassword),accessTokenValidator(),userController.updateUserOldPassword);
 // @ts-ignore
+userRouter.get("/profile/me",accessTokenValidator(),userController.getMyProfile);
+// @ts-ignore
 userRouter.get("/profile/:identifier",paramsValidator(identifierObj),accessTokenValidator(),userController.getProfile);
 
 userRouter.get("/:identifier",paramsValidator(identifierObj),queryValidator(pageLimitObj),accessTokenValidator(),userController.getUsers);
