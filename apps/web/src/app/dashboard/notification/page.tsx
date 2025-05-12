@@ -58,7 +58,7 @@ export default function Page() {
         }
     };
 
-    const handleOnClick = async ({ id, type, isRead }: { id: string; type: z.infer<typeof NotificationTypeEnum>, isRead: boolean }) => {
+    const handleOnClick = async ({ id, userId, postId, type, isRead }: { id: string; userId: string; postId: string; type: z.infer<typeof NotificationTypeEnum>, isRead: boolean }) => {
 
         if(!isRead){
             const data = await markNotificationAsRead(id);
@@ -83,10 +83,10 @@ export default function Page() {
         }
         else{
             if(type === "Accept" || type === "Request" || type === "Unfollow" || type === "Follow"){
-                router.push(`/dashboard/profile/${id}`);
+                router.push(`/dashboard/profile/${userId}`);
             }
             else{
-                router.push(`/dashboard/post/${id}`);
+                router.push(`/dashboard/post/${postId}`);
             }
         }
     };

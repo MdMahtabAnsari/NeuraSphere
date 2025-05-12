@@ -13,10 +13,10 @@ import { z } from "zod"
 import { format, parseISO } from "date-fns";
 import { NotificationCardSkeleton } from "@/components/custom/skeleton/notification"
 
-export function NotificationCard({ notification, handleOnClick }: { notification: z.infer<typeof NotificationSchema>, handleOnClick: ({id,type,isRead}:{id:string,type:z.infer<typeof NotificationTypeEnum>,isRead:boolean}) => void }) {
+export function NotificationCard({ notification, handleOnClick }: { notification: z.infer<typeof NotificationSchema>, handleOnClick: ({id,userId,postId,type,isRead}:{id:string,userId:string,postId:string,type:z.infer<typeof NotificationTypeEnum>,isRead:boolean}) => void }) {
     const { content, createdAt, isRead, type } = notification;
     return (
-        <Card className={`w-full max-w-lg cursor-pointer ${!isRead ? "border-lime-500" : ""}`} onClick={() => handleOnClick({ id: notification.senderId, type: type, isRead: isRead })}>
+        <Card className={`w-full max-w-lg cursor-pointer ${!isRead ? "border-lime-500" : ""}`} onClick={() => handleOnClick({id: notification.id, userId: notification.senderId, postId: notification.postId?notification.postId:"", type: type, isRead: isRead})}>
             <CardContent className="space-y-2">
                 {content && <p>{content}</p>}
             </CardContent>
@@ -40,7 +40,7 @@ export function UnreadAndTotalRatio({ unreadCount, count }: { unreadCount: numbe
     )
 }
 
-export function NotificationList({ notifications, fetchNotification, handleOnClick }: { notifications: z.infer<typeof NotificationDataSchema>, fetchNotification: () => void, handleOnClick: ({ id, type, isRead }: { id: string, type: z.infer<typeof NotificationTypeEnum>, isRead: boolean }) => void }) {
+export function NotificationList({ notifications, fetchNotification, handleOnClick }: { notifications: z.infer<typeof NotificationDataSchema>, fetchNotification: () => void, handleOnClick: ({ id, userId, postId, type, isRead }: { id: string, userId: string, postId: string, type: z.infer<typeof NotificationTypeEnum>, isRead: boolean }) => void }) {
     return (
         <div className="flex flex-col justify-start items-center gap-4 w-full h-full my-6">
             <InfiniteScroll
